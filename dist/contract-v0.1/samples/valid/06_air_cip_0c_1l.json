@@ -1,0 +1,124 @@
+{
+  "contract_version": "0.1.0",
+  "shipment_id": "SHP-2026-0006",
+  "direction": "export",
+  "status": "checked",
+  "parties": {
+    "shipper": {
+      "name": "Example Nonferrous K.K.",
+      "address": "2-2 Example, Nagoya",
+      "country": "JP"
+    },
+    "exporter": {
+      "name": "Example Nonferrous K.K.",
+      "address": "2-2 Example, Nagoya",
+      "country": "JP"
+    },
+    "consignee": {
+      "name": "Sample Trading (Shanghai) Co., Ltd.",
+      "address": "1 Sample Rd, Shanghai",
+      "country": "CN"
+    }
+  },
+  "trade_terms": {
+    "incoterms": "CIP",
+    "incoterms_version": "2020",
+    "place": "CNSHA",
+    "currency": "USD",
+    "payment_terms": "T/T in advance"
+  },
+  "transport": {
+    "mode": "air",
+    "port_of_loading": "JPNRT",
+    "port_of_discharge": "CNSHA",
+    "etd": "2026-12-08",
+    "eta": "2026-12-08",
+    "containers": []
+  },
+  "lines": [
+    {
+      "line_no": 1,
+      "description": "Copper alloy scrap, assay lot (sample)",
+      "hs_code_jp": null,
+      "hs_code_dest": null,
+      "origin_country": "JP",
+      "quantity": "120.000",
+      "quantity_unit": "KGM",
+      "net_weight_kg": "120.000",
+      "gross_weight_kg": "132.500",
+      "packages": 4,
+      "package_type": "BX",
+      "unit_price": "9.80",
+      "amount": "1176.00",
+      "container_number": null
+    }
+  ],
+  "totals": {
+    "amount": "1176.00",
+    "net_weight_kg": "120.000",
+    "gross_weight_kg": "132.500",
+    "packages": 4
+  },
+  "documents": [
+    {
+      "doc_type": "commercial_invoice",
+      "doc_number": "INV-0006",
+      "issue_date": "2026-12-05",
+      "file": "samples/docs/INV-0006.pdf",
+      "sha256": null,
+      "fields": {
+        "lines[0].amount": {
+          "value": "1176.00",
+          "page": 1,
+          "bbox": [
+            410.0,
+            420.0,
+            505.0,
+            434.0
+          ],
+          "extracted_by": "ai",
+          "confidence": 0.88
+        }
+      }
+    },
+    {
+      "doc_type": "packing_list",
+      "doc_number": "PL-0006",
+      "issue_date": "2026-12-05",
+      "file": "samples/docs/PL-0006.pdf",
+      "sha256": null,
+      "fields": {
+        "lines[0].packages": {
+          "value": 4,
+          "page": 1,
+          "bbox": null,
+          "extracted_by": "human",
+          "confidence": null
+        }
+      }
+    },
+    {
+      "doc_type": "other",
+      "doc_number": "AWB-0006",
+      "issue_date": "2026-12-08",
+      "file": "samples/docs/AWB-0006.pdf",
+      "sha256": null,
+      "fields": {}
+    }
+  ],
+  "events": [
+    {
+      "type": "created",
+      "at": "2026-12-04T11:00:00+09:00",
+      "by": "human",
+      "note": null
+    },
+    {
+      "type": "checked",
+      "at": "2026-12-06T16:20:00+09:00",
+      "by": "ai",
+      "note": "Document values match the shipment data."
+    }
+  ],
+  "ext": {}
+}

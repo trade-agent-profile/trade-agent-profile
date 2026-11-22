@@ -1,0 +1,143 @@
+{
+  "contract_version": "0.1.0",
+  "shipment_id": "SHP-2026-0004",
+  "direction": "export",
+  "status": "draft",
+  "parties": {
+    "shipper": {
+      "name": "Sample Metal Recycling K.K.",
+      "address": "1-1 Sample, Yokohama",
+      "country": "JP"
+    },
+    "exporter": {
+      "name": "Sample Metal Recycling K.K.",
+      "address": "1-1 Sample, Yokohama",
+      "country": "JP"
+    },
+    "consignee": {
+      "name": "Sample Trading (Shanghai) Co., Ltd.",
+      "address": "1 Sample Rd, Shanghai",
+      "country": "CN"
+    }
+  },
+  "trade_terms": {
+    "incoterms": "FCA",
+    "incoterms_version": "2020",
+    "place": "JPTYO",
+    "currency": "USD",
+    "payment_terms": null
+  },
+  "transport": {
+    "mode": "sea",
+    "port_of_loading": "JPTYO",
+    "port_of_discharge": "CNSHA",
+    "etd": null,
+    "eta": null,
+    "containers": [
+      {
+        "number": "CSQU3054444",
+        "iso_type": "42G1",
+        "seals": [],
+        "gross_weight_kg": null
+      }
+    ]
+  },
+  "lines": [
+    {
+      "line_no": 1,
+      "description": "Aluminium scrap (sample)",
+      "hs_code_jp": null,
+      "hs_code_dest": null,
+      "origin_country": "JP",
+      "quantity": "4.500",
+      "quantity_unit": "TNE",
+      "net_weight_kg": "4500.000",
+      "gross_weight_kg": "4560.000",
+      "packages": 5,
+      "package_type": "BG",
+      "unit_price": "1250.00",
+      "amount": "5625.00",
+      "container_number": "CSQU3054444"
+    },
+    {
+      "line_no": 2,
+      "description": "Copper scrap (sample)",
+      "hs_code_jp": null,
+      "hs_code_dest": null,
+      "origin_country": "JP",
+      "quantity": "5.000",
+      "quantity_unit": "TNE",
+      "net_weight_kg": "5000.000",
+      "gross_weight_kg": "5060.000",
+      "packages": 5,
+      "package_type": "BG",
+      "unit_price": "8400.00",
+      "amount": "42000.00",
+      "container_number": "CSQU3054444"
+    },
+    {
+      "line_no": 3,
+      "description": "Brass scrap (sample)",
+      "hs_code_jp": null,
+      "hs_code_dest": null,
+      "origin_country": "JP",
+      "quantity": "4.200",
+      "quantity_unit": "TNE",
+      "net_weight_kg": "4200.000",
+      "gross_weight_kg": "4255.000",
+      "packages": 6,
+      "package_type": "BG",
+      "unit_price": "5100.00",
+      "amount": "21420.00",
+      "container_number": "CSQU3054444"
+    },
+    {
+      "line_no": 4,
+      "description": "Zinc scrap (sample)",
+      "hs_code_jp": null,
+      "hs_code_dest": null,
+      "origin_country": "JP",
+      "quantity": "3.800",
+      "quantity_unit": "TNE",
+      "net_weight_kg": "3800.000",
+      "gross_weight_kg": "3850.000",
+      "packages": 4,
+      "package_type": "DR",
+      "unit_price": "2100.00",
+      "amount": "7980.00",
+      "container_number": "CSQU3054444"
+    },
+    {
+      "line_no": 5,
+      "description": "Stainless steel scrap (sample)",
+      "hs_code_jp": null,
+      "hs_code_dest": null,
+      "origin_country": "JP",
+      "quantity": "5.500",
+      "quantity_unit": "TNE",
+      "net_weight_kg": "5500.000",
+      "gross_weight_kg": "5570.000",
+      "packages": 6,
+      "package_type": "BX",
+      "unit_price": "950.00",
+      "amount": "5225.00",
+      "container_number": "CSQU3054444"
+    }
+  ],
+  "totals": {
+    "amount": "82250.00",
+    "net_weight_kg": "23000.000",
+    "gross_weight_kg": "23295.000",
+    "packages": 26
+  },
+  "documents": [],
+  "events": [
+    {
+      "type": "created",
+      "at": "2026-12-05T13:00:00+09:00",
+      "by": "human",
+      "note": null
+    }
+  ],
+  "ext": {}
+}

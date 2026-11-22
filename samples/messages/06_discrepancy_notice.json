@@ -1,0 +1,27 @@
+{
+  "profile": "trade-agent-profile",
+  "profile_version": "0.1.0",
+  "message_type": "discrepancy_notice",
+  "message_id": "8b24522c-b5c3-5e38-aa7c-82c1fbb8fe97",
+  "correlation_id": "00363643-2efa-53f9-b2fd-a1d715f6fa0d",
+  "in_reply_to": "c3a3bb63-3365-5f62-8696-20cad0349701",
+  "sent_at": "2026-12-07T10:02:00+09:00",
+  "sender": {
+    "role": "customs_broker",
+    "name": "Demo Forwarding & Customs K.K.",
+    "id": "demo-forwarder-broker"
+  },
+  "payload": {
+    "shipment_id": "SHP-2026-0100",
+    "discrepancies": [
+      {
+        "doc_type": "packing_list",
+        "doc_number": "PL-0100",
+        "path": "totals.gross_weight_kg",
+        "document_value": "21480.000",
+        "authoritative_value": "21840.000"
+      }
+    ],
+    "note": "Please correct the documents or the shipment data and submit again."
+  }
+}

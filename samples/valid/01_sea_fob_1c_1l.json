@@ -1,0 +1,103 @@
+{
+  "contract_version": "0.1.0",
+  "shipment_id": "SHP-2026-0001",
+  "direction": "export",
+  "status": "draft",
+  "parties": {
+    "shipper": {
+      "name": "Sample Metal Recycling K.K.",
+      "address": "1-1 Sample, Yokohama",
+      "country": "JP"
+    },
+    "exporter": {
+      "name": "Sample Metal Recycling K.K.",
+      "address": "1-1 Sample, Yokohama",
+      "country": "JP"
+    },
+    "consignee": {
+      "name": "Sample Trading (Shanghai) Co., Ltd.",
+      "address": "1 Sample Rd, Shanghai",
+      "country": "CN"
+    }
+  },
+  "trade_terms": {
+    "incoterms": "FOB",
+    "incoterms_version": "2020",
+    "place": "JPYOK",
+    "currency": "USD",
+    "payment_terms": "T/T in advance"
+  },
+  "transport": {
+    "mode": "sea",
+    "port_of_loading": "JPYOK",
+    "port_of_discharge": "CNSHA",
+    "etd": "2026-12-10",
+    "eta": "2026-12-14",
+    "containers": [
+      {
+        "number": "CSQU3054383",
+        "iso_type": "22G1",
+        "seals": [
+          "SL000001"
+        ],
+        "gross_weight_kg": "18250.000"
+      }
+    ]
+  },
+  "lines": [
+    {
+      "line_no": 1,
+      "description": "Aluminium scrap (sample)",
+      "hs_code_jp": null,
+      "hs_code_dest": null,
+      "origin_country": "JP",
+      "quantity": "18000.000",
+      "quantity_unit": "KGM",
+      "net_weight_kg": "18000.000",
+      "gross_weight_kg": "18250.000",
+      "packages": 18,
+      "package_type": "BG",
+      "unit_price": "1.25",
+      "amount": "22500.00",
+      "container_number": "CSQU3054383"
+    }
+  ],
+  "totals": {
+    "amount": "22500.00",
+    "net_weight_kg": "18000.000",
+    "gross_weight_kg": "18250.000",
+    "packages": 18
+  },
+  "documents": [
+    {
+      "doc_type": "commercial_invoice",
+      "doc_number": "INV-0001",
+      "issue_date": "2026-12-01",
+      "file": "samples/docs/INV-0001.pdf",
+      "sha256": null,
+      "fields": {
+        "totals.amount": {
+          "value": "22500.00",
+          "page": 1,
+          "bbox": [
+            400.0,
+            610.5,
+            520.0,
+            624.0
+          ],
+          "extracted_by": "ai",
+          "confidence": 0.93
+        }
+      }
+    }
+  ],
+  "events": [
+    {
+      "type": "created",
+      "at": "2026-12-01T09:00:00+09:00",
+      "by": "human",
+      "note": null
+    }
+  ],
+  "ext": {}
+}

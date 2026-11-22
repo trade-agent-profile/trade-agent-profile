@@ -1,0 +1,15 @@
+{
+  "id": "C01",
+  "title": {
+    "ja": "AgentCard が、プロファイルを拡張として宣言している",
+    "en": "The AgentCard declares the profile as an extension"
+  },
+  "needs": [],
+  "refuses": [],
+  "extension_required": false,
+  "steps": [
+    {
+      "card": true
+    }
+  ]
+}

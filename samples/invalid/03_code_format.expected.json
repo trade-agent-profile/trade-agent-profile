@@ -1,0 +1,9 @@
+{
+  "valid": false,
+  "errors": [
+    {
+      "code": "FORMAT_INVALID",
+      "path": "transport.port_of_discharge"
+    }
+  ]
+}

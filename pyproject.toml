@@ -1,0 +1,47 @@
+[project]
+name = "trade-agent-profile"
+version = "0.1.0"
+description = "Experimental reference specification: a trade profile (shared data contract and validation) for AI agents on top of A2A and MCP. Not an official specification of any standards body."
+readme = "README.ja.md"
+license = "Apache-2.0"
+requires-python = ">=3.12"
+dependencies = [
+    "a2a-sdk[http-server]>=1.3.1",
+    "jinja2>=3.1.6",
+    "jsonschema>=4.23",
+    "mcp>=2.3.0",
+]
+
+[project.scripts]
+trade-agent-profile = "trade_agent_profile.cli:main"
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3",
+    "ruff>=0.8",
+]
+
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/trade_agent_profile"]
+
+# 正本のスキーマ（schema/）を、部品として配るときにも同梱する
+[tool.hatch.build.targets.wheel.force-include]
+"schema/shipment.schema.json" = "trade_agent_profile/_data/shipment.schema.json"
+"schema/message.schema.json" = "trade_agent_profile/_data/message.schema.json"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+extend-exclude = ["dist"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP"]
+# 行の長さは整形（ruff format）に任せる。日本語の説明文や表は長くなってよい
+ignore = ["E501"]

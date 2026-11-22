@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="{{ lang }}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ t.title }}</title>
+<style>
+  :root { --ink: #1f2933; --soft: #52606d; --line: #d9e2ec; --paper: #f7f9fb; --left: #eef4ff; --right: #f0faf2; --warn: #b54708; --ok: #1f7a4d; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font-family: "Yu Gothic UI", "Meiryo", "Hiragino Sans", "Noto Sans JP", sans-serif; line-height: 1.7; }
+  main { max-width: 920px; margin: 0 auto; padding: 24px 16px 48px; }
+  h1 { font-size: 1.5rem; margin: 0 0 12px; }
+  h2 { font-size: 1.2rem; margin: 40px 0 8px; padding-bottom: 6px; border-bottom: 2px solid var(--line); }
+  h3 { font-size: 1.05rem; margin: 28px 0 4px; }
+  p { margin: 6px 0; }
+  .notice { background: #fff8e6; border-left: 4px solid #e0a800; padding: 8px 12px; margin: 8px 0; }
+  .box { background: #fff; border: 1px solid var(--line); border-radius: 8px; padding: 12px 16px; margin: 12px 0; }
+  .box ul { margin: 6px 0; padding-left: 20px; }
+  .entry { border: 1px solid var(--line); border-radius: 8px; padding: 10px 14px; margin: 10px 0; }
+  .entry.shipper { background: var(--left); margin-right: 8%; }
+  .entry.broker { background: var(--right); margin-left: 8%; }
+  .meta { color: var(--soft); font-size: 0.9rem; }
+  .what { font-size: 1.05rem; margin: 2px 0; }
+  .carrier { color: var(--soft); font-size: 0.85rem; }
+  code { background: #fff; border: 1px solid var(--line); border-radius: 4px; padding: 0 4px; font-size: 0.85rem; }
+  .state { margin-left: 8px; font-size: 0.9rem; }
+  .facts { margin: 6px 0; padding-left: 20px; }
+  .tag { display: inline-block; border-radius: 10px; padding: 0 8px; font-size: 0.78rem; margin-left: 6px; border: 1px solid; white-space: nowrap; }
+  .tag.rule { color: var(--ok); border-color: var(--ok); background: #fff; }
+  .tag.unverified { color: var(--warn); border-color: var(--warn); background: #fff; }
+  .flag { color: var(--warn); font-weight: bold; font-size: 0.9rem; }
+  details { margin-top: 6px; }
+  summary { cursor: pointer; color: var(--soft); font-size: 0.9rem; }
+  pre { background: #fff; border: 1px solid var(--line); border-radius: 6px; padding: 10px; overflow-x: auto; font-size: 0.8rem; line-height: 1.45; }
+  footer { margin-top: 40px; color: var(--soft); font-size: 0.9rem; border-top: 1px solid var(--line); padding-top: 12px; }
+</style>
+</head>
+<body>
+<main>
+<header>
+  <h1>{{ t.title }}</h1>
+  <p class="notice">{{ ui.notice }}</p>
+  <p class="notice">{{ ui.judge }}</p>
+  <p>{{ t.intro }}</p>
+  <p>{{ transport_note }}</p>
+</header>
+
+<section class="box">
+  <strong>{{ t.parties_title }}</strong>
+  <ul>
+    <li>{{ names.shipper }}</li>
+    <li>{{ names.broker }}</li>
+  </ul>
+  {% if cards %}
+  <strong>{{ t.cards_title }}</strong>
+  <ul>
+    {% for line in cards %}
+    <li>{{ line }}</li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+  <strong>{{ t.legend_title }}</strong>
+  <ul>
+    <li><span class="tag rule">{{ t.basis.rule }}</span> {{ t.legend_rule }}</li>
+    <li><span class="tag unverified">{{ t.basis.unverified }}</span> {{ t.legend_unverified }}</li>
+    <li>{{ t.legend_absent }}</li>
+  </ul>
+</section>
+
+{% for title, scenes in [(t.main_title, main), (t.extra_title, extra)] %}
+<h2>{{ title }}</h2>
+{% for scene in scenes %}
+<section>
+  <h3>{{ scene.title }}</h3>
+  <p>{{ scene.text }}</p>
+  {% for e in scene.entries %}
+  <article class="entry {{ e.side }}">
+    <div class="meta">{{ e.number }}. {{ e.time }} ｜ {{ e.sender }} → {{ e.receiver }}</div>
+    <div class="what">
+      <strong>{{ e.type_name }}</strong>
+      {% if e.type %}<code>{{ e.type }}</code>{% endif %}
+      {% if e.state %}<span class="state">{{ t.state_label }}：{{ e.state_name }} <code>{{ e.state }}</code></span>{% endif %}
+    </div>
+    <div class="carrier">{{ e.carrier }}{% if e.task %} ｜ {{ t.task }} <code>{{ e.task }}</code>{% endif %}</div>
+    {% if e.duplicate %}<div class="flag">{{ t.duplicate if e.side == "broker" else t.resent }}</div>{% endif %}
+    {% if e.facts %}
+    <ul class="facts">
+      {% for fact in e.facts %}
+      <li>{{ fact.label }}：{{ fact.value }}{% if fact.basis %}<span class="tag {{ fact.basis }}">{{ t.basis[fact.basis] }}</span>{% endif %}</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+    {% if e.json %}
+    <details>
+      <summary>{{ t.raw }}</summary>
+      <pre>{{ e.json }}</pre>
+    </details>
+    {% endif %}
+  </article>
+  {% endfor %}
+</section>
+{% endfor %}
+{% endfor %}
+
+<footer>
+  <p>{{ footer }}</p>
+  <p>{{ ui.notice }}</p>
+  <p>{{ ui.judge }}</p>
+</footer>
+</main>
+</body>
+</html>

@@ -1,0 +1,653 @@
+{
+  "ui": {
+    "notice": "This is an experimental reference specification. It is not an official specification of any standards body.",
+    "judge": "The user makes the decisions. This tool only helps with preliminary checks and record keeping.",
+    "code_note": "Country, currency, port and similar codes are checked for format only. Whether a code actually exists is not checked.",
+    "ok": "OK",
+    "ng": "NG",
+    "why": "Why",
+    "fix": "Fix",
+    "whole": "whole file",
+    "summary": "Checked {total} file(s): {ok} valid, {ng} invalid.",
+    "expected_ok": "as expected",
+    "expected_ng": "differs from expected",
+    "expected_summary": "Compared {total} file(s) with expected results: {ok} as expected, {ng} different.",
+    "expected_missing_file": "The paired expected-result file (.expected.json) is missing.",
+    "expected_lacking": "expected but not reported",
+    "expected_extra": "reported but not expected",
+    "no_files": "No JSON files found for: {arg}"
+  },
+  "types": {
+    "string": "string",
+    "integer": "integer",
+    "number": "number",
+    "boolean": "boolean",
+    "object": "object",
+    "array": "array",
+    "null": "null"
+  },
+  "phrases": {
+    "or": " or ",
+    "list_sep": ", ",
+    "exactly": "exactly {n}",
+    "at_least": "at least {n}",
+    "at_most": "at most {n}",
+    "range_both": "{min} to {max}",
+    "range_min": "{min} or more",
+    "range_max": "{max} or less",
+    "json_at": "near line {line}, column {column}",
+    "json_unknown": "position unknown"
+  },
+  "hints": {
+    "decimal_string": "Amounts, quantities, weights and unit prices are written as quoted strings, not numbers (e.g. \"22500.00\").",
+    "integer": "Counts and numbers are written as integers without quotes (e.g. 18)."
+  },
+  "reasons": {
+    "syntax": "it is not written as a path",
+    "not_allowed": "only authoritative items such as parties, trade terms, transport, lines and totals can be compared with document values",
+    "not_found": "there is no item at that location",
+    "not_scalar": "point to a single value, not a whole group"
+  },
+  "errors": {
+    "FILE_UNREADABLE": {
+      "why": "The file cannot be read ({detail}).",
+      "fix": "Check the file location and name."
+    },
+    "ENCODING_INVALID": {
+      "why": "The file is not encoded in UTF-8.",
+      "fix": "Save the file again as UTF-8."
+    },
+    "JSON_INVALID": {
+      "why": "The file cannot be read as JSON ({where}).",
+      "fix": "Fix missing or extra brackets, quotes or commas."
+    },
+    "ROOT_NOT_OBJECT": {
+      "why": "The outermost value is not an object (curly braces).",
+      "fix": "Write one shipment as one object."
+    },
+    "VERSION_UNSUPPORTED": {
+      "why": "Version \"{value}\" is not supported by this validator (supported: {supported}).",
+      "fix": "Set contract_version to a supported version, or use a validator for that version."
+    },
+    "REQUIRED_MISSING": {
+      "why": "Required item \"{key}\" is missing.",
+      "fix": "Add the item. Items cannot be omitted. If the value is unknown, write null (only where null is allowed)."
+    },
+    "REQUIRED_NULL": {
+      "why": "This item is required and cannot be null.",
+      "fix": "Provide a value."
+    },
+    "TYPE_MISMATCH": {
+      "why": "Wrong type (found {actual}, expected {expected}).",
+      "fix": "Write it as {expected}. {hint}"
+    },
+    "ENUM_INVALID": {
+      "why": "\"{value}\" is not an allowed value.",
+      "fix": "Use one of: {allowed}"
+    },
+    "UNKNOWN_FIELD": {
+      "why": "\"{key}\" is not an item in this version.",
+      "fix": "Check the spelling. If it is your own item, move it under ext.<project name>."
+    },
+    "EXT_INVALID": {
+      "why": "Only \"project name: object\" pairs may be placed directly under ext (problem at: {key}).",
+      "fix": "Put your own items under ext.<project name> as an object. A project name starts with a lowercase letter and uses only lowercase letters, digits, hyphens and underscores."
+    },
+    "ARRAY_LENGTH": {
+      "why": "Wrong number of elements (found {actual}, required {expected}).",
+      "fix": "Fix the number of elements."
+    },
+    "EMPTY_VALUE": {
+      "why": "The value is an empty string.",
+      "fix": "Provide a value. If it is unknown, write null (only where null is allowed)."
+    },
+    "OUT_OF_RANGE": {
+      "why": "Value {value} is out of range (allowed: {range}).",
+      "fix": "Use a value within the range."
+    },
+    "SCHEMA_VIOLATION": {
+      "why": "The data does not follow the schema ({detail}).",
+      "fix": "Check the relevant part of schema/shipment.schema.json."
+    },
+    "CONTAINER_CHECK_DIGIT": {
+      "why": "The check digit of container number \"{value}\" does not match (calculated {expected}, written {actual}).",
+      "fix": "Check the container number against the document again. It may have been copied incorrectly."
+    },
+    "CONTAINER_DUPLICATE": {
+      "why": "Container number \"{value}\" appears more than once.",
+      "fix": "List each container only once."
+    },
+    "LINE_CONTAINER_UNKNOWN": {
+      "why": "Container number \"{value}\" is not listed in transport.containers.",
+      "fix": "Use a number listed in transport.containers, or add the container. Use null for cargo that is not in a container."
+    },
+    "LINE_NO_DUPLICATE": {
+      "why": "Line number {value} is used more than once.",
+      "fix": "Give each line a different line number."
+    },
+    "TOTAL_MISMATCH": {
+      "why": "The total does not match (the lines add up to {expected}, but {actual} is written).",
+      "fix": "Check which is correct, the lines or the total, and fix it."
+    },
+    "DATE_ORDER": {
+      "why": "The estimated arrival date ({eta}) is before the estimated departure date ({etd}).",
+      "fix": "Check transport.etd and transport.eta."
+    },
+    "EXPORTER_REQUIRED": {
+      "why": "The direction is export, but the exporter is null.",
+      "fix": "Write the exporter for the Japanese export declaration in parties.exporter."
+    },
+    "FIELD_PATH_INVALID": {
+      "why": "The fields key \"{key}\" does not point to an authoritative item ({reason}).",
+      "fix": "Write it as a path to a top-level value (e.g. totals.amount, lines[0].amount)."
+    },
+    "CONFIDENCE_REQUIRED": {
+      "why": "The value was extracted by ai, but confidence is null.",
+      "fix": "Set confidence to a number between 0 and 1."
+    },
+    "BBOX_INVALID": {
+      "why": "The position {value} is not in the right order.",
+      "fix": "Use [x0, top, x1, bottom] with x0 <= x1, top <= bottom, and all values 0 or more."
+    },
+    "DISCREPANCY_NOT_RECORDED": {
+      "why": "The document value \"{doc_value}\" differs from the authoritative {field} \"{auth_value}\", but no discrepancy has been recorded.",
+      "fix": "Check which is correct, then add an event with type \"discrepancy_noted\" to events (describe it in note)."
+    },
+    "PROFILE_UNKNOWN": {
+      "why": "Profile \"{value}\" is not supported by this validator (supported: {expected}).",
+      "fix": "Set profile to {expected}."
+    },
+    "PROFILE_VERSION_UNSUPPORTED": {
+      "why": "Profile version \"{value}\" is not supported by this validator (supported: {supported}).",
+      "fix": "Set profile_version to a supported version, or send the message to a party that supports that version."
+    },
+    "IN_REPLY_TO_REQUIRED": {
+      "why": "{message_type} is a reply, but it does not say which message it replies to.",
+      "fix": "Set in_reply_to to the message_id of the message you are replying to."
+    }
+  },
+  "kinds": {
+    "generic": {
+      "why": "\"{value}\" is not in the right format.",
+      "fix": "Fix it to the format defined in the schema."
+    },
+    "version": {
+      "why": "\"{value}\" is not in version format.",
+      "fix": "Write three numbers separated by dots (e.g. 0.1.0)."
+    },
+    "shipment_id": {
+      "why": "\"{value}\" is not in shipment ID format.",
+      "fix": "Write SHP-<4-digit year>-<serial of 4 or more digits> (e.g. SHP-2026-0001)."
+    },
+    "date": {
+      "why": "\"{value}\" is not in date format.",
+      "fix": "Write it as YYYY-MM-DD (e.g. 2026-12-10)."
+    },
+    "date_calendar": {
+      "why": "\"{value}\" is not a real calendar date.",
+      "fix": "Use a date that exists (e.g. 2026-12-10)."
+    },
+    "datetime": {
+      "why": "\"{value}\" is not in date-time format.",
+      "fix": "Write it as ISO 8601 with a time zone (e.g. 2026-12-01T09:00:00+09:00)."
+    },
+    "datetime_calendar": {
+      "why": "\"{value}\" is not a real date and time.",
+      "fix": "Use a date and time that exist (e.g. 2026-12-01T09:00:00+09:00)."
+    },
+    "country": {
+      "why": "\"{value}\" is not in country code format.",
+      "fix": "Write the two uppercase letters of ISO 3166-1 (e.g. JP)."
+    },
+    "currency": {
+      "why": "\"{value}\" is not in currency code format.",
+      "fix": "Write the three uppercase letters of ISO 4217 (e.g. USD)."
+    },
+    "locode": {
+      "why": "\"{value}\" is not in UN/LOCODE format.",
+      "fix": "Write five characters: two for the country and three for the location (e.g. JPYOK)."
+    },
+    "unit": {
+      "why": "\"{value}\" is not in unit code format.",
+      "fix": "Write a UN/ECE Recommendation 20 code of two or three uppercase letters or digits (e.g. KGM)."
+    },
+    "package_type": {
+      "why": "\"{value}\" is not in package code format.",
+      "fix": "Write a UN/ECE Recommendation 21 code of two uppercase letters or digits (e.g. BG)."
+    },
+    "iso_type": {
+      "why": "\"{value}\" is not in container size and type code format.",
+      "fix": "Write the four-character ISO 6346 code (e.g. 22G1)."
+    },
+    "container_number": {
+      "why": "\"{value}\" is not in container number format.",
+      "fix": "Write four uppercase letters (the fourth is U, J or Z) followed by seven digits (e.g. CSQU3054383)."
+    },
+    "incoterms": {
+      "why": "\"{value}\" is not in trade term (Incoterms) format.",
+      "fix": "Write three uppercase letters (e.g. FOB)."
+    },
+    "incoterms_version": {
+      "why": "\"{value}\" is not in Incoterms version format.",
+      "fix": "Write the four-digit year as a quoted string (e.g. \"2020\")."
+    },
+    "amount": {
+      "why": "\"{value}\" is not in amount format.",
+      "fix": "Write a decimal with exactly two decimal places as a quoted string (e.g. \"22500.00\"). Add .00 even for currencies without decimals, such as yen."
+    },
+    "quantity": {
+      "why": "\"{value}\" is not in quantity format.",
+      "fix": "Write a decimal with up to three decimal places as a quoted string (e.g. \"18000.000\")."
+    },
+    "weight": {
+      "why": "\"{value}\" is not in weight format.",
+      "fix": "Write the weight in kg as a decimal with up to three decimal places, as a quoted string (e.g. \"18250.000\")."
+    },
+    "unit_price": {
+      "why": "\"{value}\" is not in unit price format.",
+      "fix": "Write a decimal with up to six decimal places as a quoted string (e.g. \"1.25\")."
+    },
+    "hs_code_jp": {
+      "why": "\"{value}\" is not in the format of the Japanese commodity code.",
+      "fix": "Write nine digits (the Japanese export statistical code). Use null until it has been confirmed from an official source."
+    },
+    "hs_code_dest": {
+      "why": "\"{value}\" is not in the format of the destination commodity code.",
+      "fix": "Write 6 to 13 digits. Use null until it has been confirmed from an official source."
+    },
+    "sha256": {
+      "why": "\"{value}\" is not in SHA-256 format.",
+      "fix": "Write 64 lowercase hexadecimal characters. Use null if unknown."
+    },
+    "event_type": {
+      "why": "\"{value}\" is not in event type format.",
+      "fix": "Start with a lowercase letter and use only lowercase letters, digits and underscores (e.g. created)."
+    },
+    "uuid": {
+      "why": "\"{value}\" is not in UUID format.",
+      "fix": "Write lowercase hexadecimal characters in groups of 8-4-4-4-12 (e.g. 5b0c0c5e-0c1e-4f6a-9d2b-3a1f0e7c9d10)."
+    }
+  },
+  "fields": {
+    "contract_version": "contract version",
+    "shipment_id": "shipment ID",
+    "direction": "direction",
+    "status": "status",
+    "parties": "parties",
+    "parties.shipper": "shipper",
+    "parties.shipper.name": "shipper name",
+    "parties.shipper.address": "shipper address",
+    "parties.shipper.country": "shipper country",
+    "parties.exporter": "exporter",
+    "parties.exporter.name": "exporter name",
+    "parties.exporter.address": "exporter address",
+    "parties.exporter.country": "exporter country",
+    "parties.consignee": "consignee",
+    "parties.consignee.name": "consignee name",
+    "parties.consignee.address": "consignee address",
+    "parties.consignee.country": "consignee country",
+    "trade_terms": "trade terms",
+    "trade_terms.incoterms": "Incoterms rule",
+    "trade_terms.incoterms_version": "Incoterms version",
+    "trade_terms.place": "named place",
+    "trade_terms.currency": "currency",
+    "trade_terms.payment_terms": "payment terms",
+    "transport": "transport",
+    "transport.mode": "transport mode",
+    "transport.port_of_loading": "port of loading",
+    "transport.port_of_discharge": "port of discharge",
+    "transport.etd": "estimated departure date",
+    "transport.eta": "estimated arrival date",
+    "transport.containers": "container list",
+    "transport.containers[]": "container",
+    "transport.containers[].number": "container number",
+    "transport.containers[].iso_type": "container size and type code",
+    "transport.containers[].seals": "seal number list",
+    "transport.containers[].seals[]": "seal number",
+    "transport.containers[].gross_weight_kg": "gross weight in the container",
+    "lines": "line list",
+    "lines[]": "line",
+    "lines[].line_no": "line number",
+    "lines[].description": "description of goods",
+    "lines[].hs_code_jp": "Japanese commodity code",
+    "lines[].hs_code_dest": "destination commodity code",
+    "lines[].origin_country": "country of origin",
+    "lines[].quantity": "quantity",
+    "lines[].quantity_unit": "quantity unit",
+    "lines[].net_weight_kg": "net weight",
+    "lines[].gross_weight_kg": "gross weight",
+    "lines[].packages": "number of packages",
+    "lines[].package_type": "package type",
+    "lines[].unit_price": "unit price",
+    "lines[].amount": "amount",
+    "lines[].container_number": "container number of the line",
+    "totals": "totals",
+    "totals.amount": "total amount",
+    "totals.net_weight_kg": "total net weight",
+    "totals.gross_weight_kg": "total gross weight",
+    "totals.packages": "total number of packages",
+    "documents": "document list",
+    "documents[]": "document",
+    "documents[].doc_type": "document type",
+    "documents[].doc_number": "document number",
+    "documents[].issue_date": "issue date",
+    "documents[].file": "file location",
+    "documents[].sha256": "file fingerprint (SHA-256)",
+    "documents[].fields": "values read from the document",
+    "documents[].fields.*": "value read from the document",
+    "documents[].fields.*.value": "value written on the document",
+    "documents[].fields.*.page": "page number",
+    "documents[].fields.*.bbox": "position on the document",
+    "documents[].fields.*.bbox[]": "position coordinate",
+    "documents[].fields.*.extracted_by": "how the value was read",
+    "documents[].fields.*.confidence": "confidence",
+    "events": "event list",
+    "events[]": "event",
+    "events[].type": "event type",
+    "events[].at": "date and time",
+    "events[].by": "who did it",
+    "events[].note": "note",
+    "ext": "project-specific items",
+    "ext.*": "items of one project"
+  },
+  "message_fields": {
+    "profile": "profile name",
+    "profile_version": "profile version",
+    "message_type": "message type",
+    "message_id": "message identifier",
+    "correlation_id": "conversation identifier",
+    "in_reply_to": "message being replied to",
+    "sent_at": "date and time sent",
+    "sender": "sender",
+    "sender.role": "sender role",
+    "sender.name": "sender name",
+    "sender.id": "sender identifier",
+    "payload": "message content",
+    "payload.shipment": "shipment data",
+    "payload.reply_by": "reply deadline",
+    "payload.note": "note",
+    "payload.shipment_id": "shipment ID",
+    "payload.quote_number": "quote number",
+    "payload.currency": "currency",
+    "payload.charges": "charge list",
+    "payload.charges[]": "charge",
+    "payload.charges[].name": "charge name",
+    "payload.charges[].amount": "charge amount",
+    "payload.total": "quote total",
+    "payload.valid_until": "quote validity date",
+    "payload.booking_number": "booking number",
+    "payload.etd": "estimated departure date",
+    "payload.eta": "estimated arrival date",
+    "payload.cargo_cutoff_at": "cargo cut-off time",
+    "payload.discrepancies": "discrepancy list",
+    "payload.discrepancies[]": "discrepancy",
+    "payload.discrepancies[].doc_type": "document type",
+    "payload.discrepancies[].doc_number": "document number",
+    "payload.discrepancies[].path": "item that differs",
+    "payload.discrepancies[].document_value": "value written on the document",
+    "payload.discrepancies[].authoritative_value": "authoritative value",
+    "payload.draft_number": "draft number",
+    "payload.mock": "mock marker",
+    "payload.exporter": "exporter",
+    "payload.exporter.name": "exporter name",
+    "payload.exporter.address": "exporter address",
+    "payload.exporter.country": "exporter country",
+    "payload.consignee": "consignee",
+    "payload.consignee.name": "consignee name",
+    "payload.consignee.address": "consignee address",
+    "payload.consignee.country": "consignee country",
+    "payload.port_of_loading": "port of loading",
+    "payload.port_of_discharge": "port of discharge",
+    "payload.incoterms": "Incoterms rule",
+    "payload.invoice_amount": "invoice amount",
+    "payload.lines": "line list",
+    "payload.lines[]": "line",
+    "payload.lines[].line_no": "line number",
+    "payload.lines[].description": "description of goods",
+    "payload.lines[].hs_code_jp": "Japanese commodity code",
+    "payload.lines[].quantity": "quantity",
+    "payload.lines[].quantity_unit": "quantity unit",
+    "payload.lines[].net_weight_kg": "net weight",
+    "payload.lines[].amount": "amount",
+    "payload.unverified": "list of unverified items",
+    "payload.unverified[]": "unverified item",
+    "payload.reason": "reason for declining",
+    "payload.code": "error code",
+    "payload.text": "error text",
+    "payload.text.ja": "error text (Japanese)",
+    "payload.text.en": "error text (English)",
+    "payload.issues": "list of problem locations",
+    "payload.issues[]": "problem location",
+    "payload.issues[].code": "problem code",
+    "payload.issues[].path": "problem path"
+  },
+  "message_errors": {
+    "PROFILE_UNKNOWN": "The message does not belong to this profile, so it was not processed.",
+    "PROFILE_VERSION_UNSUPPORTED": "The profile version is not supported, so the message was not processed. The supported version is 0.1.0.",
+    "VALIDATION_FAILED": "The message is incomplete or incorrect. Fix the places listed in issues and send it again with a new message_id.",
+    "MESSAGE_ID_REUSED": "A message with the same message_id but different content was received. It was not processed. Give every new message a new message_id.",
+    "UNEXPECTED_MESSAGE": "This party does not accept this type of message.",
+    "INTERNAL_ERROR": "An unexpected failure occurred on the receiving side. Please send the message again later."
+  },
+  "report": {
+    "title": "Scripted demo record: from quote request to approval",
+    "intro": "This is a record of two parties, the shipper side and the other side (a forwarder that is also a customs broker), exchanging messages in a fixed format. No AI is used; everything follows a fixed script and fixed rules. All data is fictional.",
+    "transport_note": "Nothing is sent over a network in this record. Messages are passed inside one program, and each row shows how it maps onto A2A.",
+    "legend_title": "Where the values come from",
+    "legend_rule": "A value calculated by a fixed rule, or copied as-is from the authoritative data.",
+    "legend_unverified": "A value that has not been confirmed from an official source. A person must confirm it before use.",
+    "legend_absent": "This record contains no \"official data\" (values taken from public sources) and no \"AI guess\", because no public source was consulted and no AI was used.",
+    "basis": {
+      "rule": "calculated by rule",
+      "unverified": "unverified"
+    },
+    "parties_title": "The two sides",
+    "party": {
+      "shipper": "Shipper side",
+      "broker": "Other side (forwarder and customs broker)"
+    },
+    "main_title": "Main flow: from quote request to approval",
+    "extra_title": "Extras: resend, version mismatch, declining",
+    "scenes": {
+      "quote": {
+        "title": "1. Quote",
+        "text": "The shipper side sends the planned shipment and asks for a quote. The other side calculates a quote from a fictional tariff and returns it."
+      },
+      "booking": {
+        "title": "2. Booking",
+        "text": "The shipper side accepts the quote and asks for a booking. The other side returns a booking number and the schedule."
+      },
+      "documents": {
+        "title": "3. Document submission and discrepancy notice",
+        "text": "The shipper side submits the shipment data with the values read from the documents. The gross weight on the packing list differs from the authoritative value, so the other side reports the discrepancy and asks for a corrected submission."
+      },
+      "resubmission": {
+        "title": "4. Resubmission and declaration draft",
+        "text": "The shipper side submits again with the corrected document, continuing the same task. With no discrepancies left, the other side returns a (mock) declaration draft."
+      },
+      "approval": {
+        "title": "5. Approval",
+        "text": "The shipper side checks the declaration draft and approves it. A person makes the decision; the message only carries the result."
+      },
+      "resend": {
+        "title": "Extra 1. Resending the same message",
+        "text": "The shipper side sends the booking request from step 2 again, unchanged. The other side does not process it again and returns the first result as-is. No second booking is made."
+      },
+      "version": {
+        "title": "Extra 2. Version mismatch",
+        "text": "The shipper side sends a message in a version the other side does not support (0.2.0). The other side does not process it and declines, stating the supported version."
+      },
+      "decline": {
+        "title": "Extra 3. Declining a quote",
+        "text": "In another conversation, the shipper side receives a quote and declines it. The other side records that and finishes."
+      }
+    },
+    "types": {
+      "quote_request": "Quote request",
+      "quote": "Quote",
+      "booking_request": "Booking request",
+      "booking_confirmation": "Booking confirmation",
+      "document_submission": "Document submission",
+      "discrepancy_notice": "Discrepancy notice",
+      "declaration_draft": "Declaration draft (mock)",
+      "approval": "Approval",
+      "rejection": "Rejection",
+      "error": "Error"
+    },
+    "state_only": "No reply envelope",
+    "states": {
+      "TASK_STATE_COMPLETED": "completed",
+      "TASK_STATE_INPUT_REQUIRED": "input required (fix and send again)",
+      "TASK_STATE_REJECTED": "rejected",
+      "TASK_STATE_FAILED": "failed"
+    },
+    "carrier": {
+      "message": "On A2A: sent as one Part of a Message (data = envelope, mediaType = application/json)",
+      "artifact": "On A2A: returned as the task result (Artifact)",
+      "status": "On A2A: returned as a Message attached to the task status",
+      "state": "On A2A: only the task status is returned"
+    },
+    "task": "Task",
+    "state_label": "State",
+    "duplicate": "Recognised as a resend: not processed, first result returned",
+    "resent": "Resent with the same message_id",
+    "raw": "Show the envelope (JSON)",
+    "facts": {
+      "shipment_id": "Shipment ID",
+      "route": "Route",
+      "cargo": "Cargo",
+      "cargo_text": "{lines} line(s), {containers} container(s), gross weight {gross} kg",
+      "reply_by": "Reply deadline",
+      "quote_number": "Quote number",
+      "charge": "Charge",
+      "total": "Total",
+      "valid_until": "Quote valid until",
+      "note": "Note",
+      "booking_number": "Booking number",
+      "etd": "Estimated departure",
+      "eta": "Estimated arrival",
+      "cargo_cutoff_at": "Cargo cut-off",
+      "documents": "Documents",
+      "discrepancy": "Discrepancy",
+      "discrepancy_text": "{document} / {path}: the document says {document_value}, the authoritative value is {authoritative_value}",
+      "draft_number": "Draft number",
+      "mock": "Caution",
+      "mock_text": "This is a mock draft. It is not a customs declaration and has not been filed anywhere.",
+      "exporter": "Exporter",
+      "consignee": "Consignee",
+      "incoterms": "Trade terms",
+      "invoice_amount": "Invoice amount",
+      "line": "Line {no}",
+      "line_text": "{description} / {quantity} {unit} / {amount}",
+      "hs_code_jp": "Commodity code of line {no}",
+      "unverified_value": "blank (not filled in until confirmed from a source)",
+      "reason": "Reason",
+      "error_code": "Error code",
+      "error_text": "Explanation",
+      "issue": "Problem location"
+    },
+    "footer": "This record was produced by scripts/demo.py. It is identical every time it runs.",
+    "transport_note_a2a": "This is a record of two agents actually exchanging messages over A2A. The communication stays inside this computer.",
+    "footer_a2a": "This record was produced by scripts/demo_a2a.py. Task identifiers change on every run.",
+    "cards_title": "AgentCards of the two agents",
+    "card_line": "{name}: profile extension declared {declared}, binding {binding}, A2A version {version}, accepted types {accepts}",
+    "yes": "yes",
+    "no": "no",
+    "none": "none"
+  },
+  "conformance": {
+    "title": "Conformance test",
+    "target": "Target: {url} ({name})",
+    "pass": "PASS",
+    "fail": "FAIL",
+    "skip": "SKIP",
+    "skip_reason": "does not match what the target's AgentCard declares (accepted types, whether the extension is required)",
+    "summary": "{total} test(s): {passed} passed, {failed} failed, {skipped} skipped",
+    "all_passed": "All applicable tests passed.",
+    "some_failed": "Some tests did not pass.",
+    "nothing_ran": "No test was applicable.",
+    "no_card": "Could not get the target's AgentCard ({detail})",
+    "place": {
+      "artifact": "result (Artifact)",
+      "status": "Message attached to the status"
+    },
+    "problems": {
+      "p_state": "Step {step}: the state was {actual} (expected {expected})",
+      "p_reply_missing": "Step {step}: no reply envelope (expected {expected})",
+      "p_reply_unexpected": "Step {step}: a reply envelope was returned (expected none)",
+      "p_reply_place": "Step {step}: the reply was placed in {actual} (expected {expected})",
+      "p_reply_type": "Step {step}: the reply type was {actual} (expected {expected})",
+      "p_reply_invalid": "Step {step}: the reply envelope does not follow the profile ({detail})",
+      "p_in_reply_to": "Step {step}: in_reply_to of the reply does not point to the message that was sent",
+      "p_correlation": "Step {step}: correlation_id of the reply differs from the one that was sent",
+      "p_code": "Step {step}: the error code was {actual} (expected {expected})",
+      "p_issue": "Step {step}: issues does not contain {expected}",
+      "p_payload": "Step {step}: {path} of the reply was {actual} (expected {expected})",
+      "p_same_reply": "Step {step}: the reply to the resend differs from the first reply",
+      "p_error": "Step {step}: communication failed ({detail})",
+      "p_a2a_error": "Step {step}: the A2A error was {actual} (expected {expected})",
+      "p_a2a_error_missing": "Step {step}: expected the A2A error {expected}, but a task was returned (state {state})",
+      "card_no_extension": "The AgentCard does not declare the profile extension ({uri})",
+      "card_profile": "params.profile of the extension in the AgentCard is not {expected}",
+      "card_version": "params.profile_versions of the extension in the AgentCard does not contain {expected}",
+      "card_interface": "The AgentCard has no interface for A2A {expected}"
+    }
+  },
+  "prepublish": {
+    "title": "Pre-publication check",
+    "commit": "Commit checked: {commit}{dirty}",
+    "dirty": " (including uncommitted changes)",
+    "scope": "Scope: {files} files tracked by git, {history} file versions found only in the history, {commits} commit messages",
+    "stage2_skipped": "Stage 2 (name list and authors) was not run. Whoever prepares the name list runs it themselves with --names.",
+    "names_scope": "Stage 2: checked with a name list of {count} entries (the entries are never shown or recorded).",
+    "author_scope": "Stage 2: also checked that every commit author is {author}.",
+    "categories": {
+      "secret": "Secrets (shapes of keys and tokens)",
+      "tracked_private": "Files that must not be in git",
+      "email": "Email addresses",
+      "phone": "Phone numbers",
+      "user_path": "Paths containing a computer user name",
+      "sample_marker": "Samples without the fictitious marker",
+      "document_file": "Document and image files",
+      "name_list": "Entries of the name list",
+      "author": "Commits whose author is not {author}"
+    },
+    "count_line": "{label}: {count}",
+    "group": "[{label}] {count}",
+    "fixes": {
+      "secret": "If it is a real key or token, remove it and revoke it with its issuer.",
+      "tracked_private": "Remove it from git. The contents of .env and data/private/ never go into git.",
+      "email": "For samples and explanations, use reserved names such as example.com.",
+      "phone": "If it is a real number, remove it.",
+      "user_path": "Remove the user name, or mask it like <name>.",
+      "sample_marker": "Make it clearly fictitious: put Sample, Example or Demo in party names and (sample) in descriptions.",
+      "document_file": "Check by eye that no real data is shown. Remove the file if it is not needed.",
+      "name_list": "Remove the name from that place.",
+      "author": "Fixing an author name requires rewriting the history."
+    },
+    "where": {
+      "history_blob": "{location} (only in the history; version {blob})",
+      "history_path": "{location} (only in the history)",
+      "commit_message": "message of commit {commit}, line {line}",
+      "commit_author": "author/committer of commit {commit}",
+      "path": "file name {path}",
+      "ref": "branch or tag name {path}",
+      "field": " (field {field})",
+      "list_line": " (entry on line {line} of the list)"
+    },
+    "history_note": "Anything found only in the history or in commit messages stays there even after the current files are fixed. Removing it requires rewriting the history, so discuss it before publishing.",
+    "all_clear": "Nothing was found.",
+    "found": "{count} item(s) found.",
+    "report_title": "Pre-publication check record",
+    "when": "Checked at: {when}",
+    "table_category": "Check",
+    "table_count": "Count",
+    "report_places": "Where they were found",
+    "none": "None",
+    "report_written": "Record written: {path}",
+    "no_git": "Run this in a folder managed by git: {path}",
+    "names_missing": "The name list file was not found: {path}",
+    "names_empty": "The name list has no entries: {path}",
+    "names_encoding": "The name list cannot be read as UTF-8: {path}. Open it in Notepad and save it again with the encoding set to UTF-8 (File > Save as)."
+  }
+}

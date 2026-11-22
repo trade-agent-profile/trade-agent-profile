@@ -1,0 +1,30 @@
+# 仮想環境と一時ファイル
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+build/
+
+# 秘密と実データ（git に入れない）
+.env
+.env.*
+!.env.example
+data/private/
+
+# 部品を組み立てたときの出力（配布物 dist/contract-v*/ は入れる）
+dist/*
+!dist/contract-v*/
+
+# Claude Code の個人設定と、フックの動作記録
+.claude/settings.local.json
+.claude/hooks/*.log
+
+# 実行のたびに変わるもの
+*.sqlite3
+# A2A の通信で実行したデモの記録（タスクの識別子が毎回変わる。scripts\demo_a2a.py で作り直せる）
+reports/demo-a2a.html
+
+# 公開用の置き場の印（scripts/export_public.py が置く。公開用の置き場の git には入れない）
+.export-public.json

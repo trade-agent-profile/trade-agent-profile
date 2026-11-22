@@ -1,0 +1,155 @@
+{
+  "contract_version": "0.1.0",
+  "shipment_id": "SHP-2026-0005",
+  "direction": "export",
+  "status": "approved",
+  "parties": {
+    "shipper": {
+      "name": "Demo Resource Recovery Co., Ltd.",
+      "address": "3-3 Demo, Osaka",
+      "country": "JP"
+    },
+    "exporter": {
+      "name": "Demo Resource Recovery Co., Ltd.",
+      "address": "3-3 Demo, Osaka",
+      "country": "JP"
+    },
+    "consignee": {
+      "name": "Example Renewable Materials (Ningbo) Co., Ltd.",
+      "address": "8 Example Rd, Ningbo",
+      "country": "CN"
+    }
+  },
+  "trade_terms": {
+    "incoterms": "FOB",
+    "incoterms_version": "2020",
+    "place": "JPOSA",
+    "currency": "JPY",
+    "payment_terms": "T/T within 5 days after B/L date"
+  },
+  "transport": {
+    "mode": "sea",
+    "port_of_loading": "JPOSA",
+    "port_of_discharge": "CNTAO",
+    "etd": "2026-12-20",
+    "eta": "2026-12-24",
+    "containers": []
+  },
+  "lines": [
+    {
+      "line_no": 1,
+      "description": "Steel scrap, heavy melting, in bulk (sample)",
+      "hs_code_jp": null,
+      "hs_code_dest": null,
+      "origin_country": "JP",
+      "quantity": "3000.000",
+      "quantity_unit": "TNE",
+      "net_weight_kg": "3000000.000",
+      "gross_weight_kg": "3000000.000",
+      "packages": null,
+      "package_type": null,
+      "unit_price": "52000.00",
+      "amount": "156000000.00",
+      "container_number": null
+    }
+  ],
+  "totals": {
+    "amount": "156000000.00",
+    "net_weight_kg": "3000000.000",
+    "gross_weight_kg": "3000000.000",
+    "packages": null
+  },
+  "documents": [
+    {
+      "doc_type": "commercial_invoice",
+      "doc_number": "INV-0005",
+      "issue_date": "2026-12-16",
+      "file": "samples/docs/INV-0005.pdf",
+      "sha256": null,
+      "fields": {
+        "totals.amount": {
+          "value": "156000000.00",
+          "page": 1,
+          "bbox": null,
+          "extracted_by": "human",
+          "confidence": null
+        }
+      }
+    },
+    {
+      "doc_type": "bill_of_lading",
+      "doc_number": "BL-0005",
+      "issue_date": "2026-12-20",
+      "file": "samples/docs/BL-0005.pdf",
+      "sha256": null,
+      "fields": {
+        "transport.etd": {
+          "value": "2026-12-20",
+          "page": 1,
+          "bbox": null,
+          "extracted_by": "human",
+          "confidence": null
+        }
+      }
+    },
+    {
+      "doc_type": "weight_certificate",
+      "doc_number": "WC-0005",
+      "issue_date": "2026-12-19",
+      "file": "samples/docs/WC-0005.pdf",
+      "sha256": null,
+      "fields": {
+        "totals.net_weight_kg": {
+          "value": "3000000.000",
+          "page": 1,
+          "bbox": null,
+          "extracted_by": "human",
+          "confidence": null
+        }
+      }
+    },
+    {
+      "doc_type": "export_declaration",
+      "doc_number": "ED-0005",
+      "issue_date": "2026-12-17",
+      "file": "samples/docs/ED-0005.pdf",
+      "sha256": null,
+      "fields": {}
+    },
+    {
+      "doc_type": "export_permit",
+      "doc_number": "EP-0005",
+      "issue_date": "2026-12-18",
+      "file": "samples/docs/EP-0005.pdf",
+      "sha256": null,
+      "fields": {}
+    }
+  ],
+  "events": [
+    {
+      "type": "created",
+      "at": "2026-12-14T09:00:00+09:00",
+      "by": "human",
+      "note": null
+    },
+    {
+      "type": "checked",
+      "at": "2026-12-16T11:00:00+09:00",
+      "by": "rule",
+      "note": null
+    },
+    {
+      "type": "submitted",
+      "at": "2026-12-17T10:00:00+09:00",
+      "by": "human",
+      "note": null
+    },
+    {
+      "type": "approved",
+      "at": "2026-12-18T16:45:00+09:00",
+      "by": "human",
+      "note": "Export permit received."
+    }
+  ],
+  "ext": {}
+}

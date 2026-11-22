@@ -1,0 +1,40 @@
+{
+  "profile": "trade-agent-profile",
+  "profile_version": "0.1.0",
+  "message_type": "quote",
+  "message_id": "bc813ee0-3072-56e6-bacc-69cc0e395e58",
+  "correlation_id": "00363643-2efa-53f9-b2fd-a1d715f6fa0d",
+  "in_reply_to": "585446ba-cc74-5587-ba4e-f6aa75ab3be2",
+  "sent_at": "2026-12-01T09:02:00+09:00",
+  "sender": {
+    "role": "forwarder",
+    "name": "Demo Forwarding & Customs K.K.",
+    "id": "demo-forwarder-broker"
+  },
+  "payload": {
+    "shipment_id": "SHP-2026-0100",
+    "quote_number": "Q-0001",
+    "currency": "JPY",
+    "charges": [
+      {
+        "name": "Ocean freight (sample tariff)",
+        "amount": "85000.00"
+      },
+      {
+        "name": "Terminal handling (sample tariff)",
+        "amount": "32000.00"
+      },
+      {
+        "name": "Export customs clearance (sample tariff)",
+        "amount": "11800.00"
+      },
+      {
+        "name": "Documentation (sample tariff)",
+        "amount": "5500.00"
+      }
+    ],
+    "total": "134300.00",
+    "valid_until": "2026-12-15",
+    "note": "Mock quote calculated from a fixed sample tariff. It is not a real offer."
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "trade-agent-profile": {
+      "command": "uv",
+      "args": ["run", "python", "-m", "trade_agent_profile.mcp_server"]
+    }
+  }
+}

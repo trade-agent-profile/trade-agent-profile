@@ -1,0 +1,8 @@
+# 改行は LF にそろえる（Windows でも変えない）
+* text=auto eol=lf
+
+# 文字ではないファイル
+*.png binary
+*.jpg binary
+*.pdf binary
+*.sqlite3 binary

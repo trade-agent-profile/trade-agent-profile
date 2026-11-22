@@ -1,0 +1,1558 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>台本デモの記録：見積依頼から承認まで</title>
+<style>
+  :root { --ink: #1f2933; --soft: #52606d; --line: #d9e2ec; --paper: #f7f9fb; --left: #eef4ff; --right: #f0faf2; --warn: #b54708; --ok: #1f7a4d; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font-family: "Yu Gothic UI", "Meiryo", "Hiragino Sans", "Noto Sans JP", sans-serif; line-height: 1.7; }
+  main { max-width: 920px; margin: 0 auto; padding: 24px 16px 48px; }
+  h1 { font-size: 1.5rem; margin: 0 0 12px; }
+  h2 { font-size: 1.2rem; margin: 40px 0 8px; padding-bottom: 6px; border-bottom: 2px solid var(--line); }
+  h3 { font-size: 1.05rem; margin: 28px 0 4px; }
+  p { margin: 6px 0; }
+  .notice { background: #fff8e6; border-left: 4px solid #e0a800; padding: 8px 12px; margin: 8px 0; }
+  .box { background: #fff; border: 1px solid var(--line); border-radius: 8px; padding: 12px 16px; margin: 12px 0; }
+  .box ul { margin: 6px 0; padding-left: 20px; }
+  .entry { border: 1px solid var(--line); border-radius: 8px; padding: 10px 14px; margin: 10px 0; }
+  .entry.shipper { background: var(--left); margin-right: 8%; }
+  .entry.broker { background: var(--right); margin-left: 8%; }
+  .meta { color: var(--soft); font-size: 0.9rem; }
+  .what { font-size: 1.05rem; margin: 2px 0; }
+  .carrier { color: var(--soft); font-size: 0.85rem; }
+  code { background: #fff; border: 1px solid var(--line); border-radius: 4px; padding: 0 4px; font-size: 0.85rem; }
+  .state { margin-left: 8px; font-size: 0.9rem; }
+  .facts { margin: 6px 0; padding-left: 20px; }
+  .tag { display: inline-block; border-radius: 10px; padding: 0 8px; font-size: 0.78rem; margin-left: 6px; border: 1px solid; white-space: nowrap; }
+  .tag.rule { color: var(--ok); border-color: var(--ok); background: #fff; }
+  .tag.unverified { color: var(--warn); border-color: var(--warn); background: #fff; }
+  .flag { color: var(--warn); font-weight: bold; font-size: 0.9rem; }
+  details { margin-top: 6px; }
+  summary { cursor: pointer; color: var(--soft); font-size: 0.9rem; }
+  pre { background: #fff; border: 1px solid var(--line); border-radius: 6px; padding: 10px; overflow-x: auto; font-size: 0.8rem; line-height: 1.45; }
+  footer { margin-top: 40px; color: var(--soft); font-size: 0.9rem; border-top: 1px solid var(--line); padding-top: 12px; }
+</style>
+</head>
+<body>
+<main>
+<header>
+  <h1>台本デモの記録：見積依頼から承認まで</h1>
+  <p class="notice">これは実験的な参照仕様です。いずれの標準化団体の公式仕様でもありません。</p>
+  <p class="notice">判断するのは利用者です。このツールは下調べと記録を担います。</p>
+  <p>荷主側と相手側（フォワーダー兼通関業者）の2つが、決まった形のメッセージをやり取りした記録です。AI は使わず、決まった台本と規則だけで動いています。データはすべて架空です。</p>
+  <p>この記録では通信をしていません。1つのプログラムの中でメッセージを受け渡し、A2A に載せたときの対応を各行に示しています。</p>
+</header>
+
+<section class="box">
+  <strong>登場する2つの側</strong>
+  <ul>
+    <li>荷主側（Demo Resource Recovery Co., Ltd.）</li>
+    <li>相手側（フォワーダー兼通関業者）（Demo Forwarding &amp; Customs K.K.）</li>
+  </ul>
+  <strong>値の出どころの表示</strong>
+  <ul>
+    <li><span class="tag rule">規則による計算</span> 決まった規則で計算した値、または正本からそのまま写した値です。</li>
+    <li><span class="tag unverified">未確認</span> 出典で確かめていない値です。使う前に、人が確かめる必要があります。</li>
+    <li>この記録には「公式データ」（公的な出典から取った値）と「AIの推測」は出てきません。公的な出典を引いておらず、AI も使っていないためです。</li>
+  </ul>
+</section>
+
+<h2>本編：見積依頼から承認まで</h2>
+<section>
+  <h3>1. 見積</h3>
+  <p>荷主側が、予定している船積みの内容を送って見積を頼みます。相手側は、架空の料金表から見積を計算して返します。</p>
+  <article class="entry shipper">
+    <div class="meta">1. 2026-12-01 09:00 ｜ 荷主側（Demo Resource Recovery Co., Ltd.） → 相手側（フォワーダー兼通関業者）（Demo Forwarding &amp; Customs K.K.）</div>
+    <div class="what">
+      <strong>見積依頼</strong>
+<code>quote_request</code>    </div>
+    <div class="carrier">A2A では：Message の Part 1つ（data に封筒、mediaType は application/json）で送る</div>
+    <ul class="facts">
+      <li>船積みID：SHP-2026-0100</li>
+      <li>経路：JPUKB → CNXMN（sea）</li>
+      <li>貨物：明細 2件、コンテナ 1本、総重量 21840.000 kg</li>
+      <li>回答の期限：2026-12-03</li>
+    </ul>
+    <details>
+      <summary>封筒の中身（JSON）を見る</summary>
+      <pre>{
+  &#34;profile&#34;: &#34;trade-agent-profile&#34;,
+  &#34;profile_version&#34;: &#34;0.1.0&#34;,
+  &#34;message_type&#34;: &#34;quote_request&#34;,
+  &#34;message_id&#34;: &#34;585446ba-cc74-5587-ba4e-f6aa75ab3be2&#34;,
+  &#34;correlation_id&#34;: &#34;00363643-2efa-53f9-b2fd-a1d715f6fa0d&#34;,
+  &#34;sent_at&#34;: &#34;2026-12-01T09:00:00+09:00&#34;,
+  &#34;sender&#34;: {
+    &#34;role&#34;: &#34;shipper&#34;,
+    &#34;name&#34;: &#34;Demo Resource Recovery Co., Ltd.&#34;,
+    &#34;id&#34;: &#34;demo-shipper&#34;
+  },
+  &#34;payload&#34;: {
+    &#34;shipment&#34;: {
+      &#34;contract_version&#34;: &#34;0.1.0&#34;,
+      &#34;shipment_id&#34;: &#34;SHP-2026-0100&#34;,
+      &#34;direction&#34;: &#34;export&#34;,
+      &#34;status&#34;: &#34;draft&#34;,
+      &#34;parties&#34;: {
+        &#34;shipper&#34;: {
+          &#34;name&#34;: &#34;Demo Resource Recovery Co., Ltd.&#34;,
+          &#34;address&#34;: &#34;3-3 Demo, Osaka&#34;,
+          &#34;country&#34;: &#34;JP&#34;
+        },
+        &#34;exporter&#34;: {
+          &#34;name&#34;: &#34;Demo Resource Recovery Co., Ltd.&#34;,
+          &#34;address&#34;: &#34;3-3 Demo, Osaka&#34;,
+          &#34;country&#34;: &#34;JP&#34;
+        },
+        &#34;consignee&#34;: {
+          &#34;name&#34;: &#34;Sample Trading (Shanghai) Co., Ltd.&#34;,
+          &#34;address&#34;: &#34;1 Sample Rd, Shanghai&#34;,
+          &#34;country&#34;: &#34;CN&#34;
+        }
+      },
+      &#34;trade_terms&#34;: {
+        &#34;incoterms&#34;: &#34;CIF&#34;,
+        &#34;incoterms_version&#34;: &#34;2020&#34;,
+        &#34;place&#34;: &#34;CNXMN&#34;,
+        &#34;currency&#34;: &#34;USD&#34;,
+        &#34;payment_terms&#34;: &#34;T/T in advance&#34;
+      },
+      &#34;transport&#34;: {
+        &#34;mode&#34;: &#34;sea&#34;,
+        &#34;port_of_loading&#34;: &#34;JPUKB&#34;,
+        &#34;port_of_discharge&#34;: &#34;CNXMN&#34;,
+        &#34;etd&#34;: &#34;2026-12-11&#34;,
+        &#34;eta&#34;: &#34;2026-12-16&#34;,
+        &#34;containers&#34;: [
+          {
+            &#34;number&#34;: &#34;CSQU3054510&#34;,
+            &#34;iso_type&#34;: &#34;22G1&#34;,
+            &#34;seals&#34;: [
+              &#34;SL000014&#34;
+            ],
+            &#34;gross_weight_kg&#34;: &#34;21840.000&#34;
+          }
+        ]
+      },
+      &#34;lines&#34;: [
+        {
+          &#34;line_no&#34;: 1,
+          &#34;description&#34;: &#34;Aluminium scrap (sample)&#34;,
+          &#34;hs_code_jp&#34;: null,
+          &#34;hs_code_dest&#34;: null,
+          &#34;origin_country&#34;: &#34;JP&#34;,
+          &#34;quantity&#34;: &#34;10000.000&#34;,
+          &#34;quantity_unit&#34;: &#34;KGM&#34;,
+          &#34;net_weight_kg&#34;: &#34;10000.000&#34;,
+          &#34;gross_weight_kg&#34;: &#34;10120.000&#34;,
+          &#34;packages&#34;: 10,
+          &#34;package_type&#34;: &#34;BG&#34;,
+          &#34;unit_price&#34;: &#34;1.30&#34;,
+          &#34;amount&#34;: &#34;13000.00&#34;,
+          &#34;container_number&#34;: &#34;CSQU3054510&#34;
+        },
+        {
+          &#34;line_no&#34;: 2,
+          &#34;description&#34;: &#34;Stainless steel scrap (sample)&#34;,
+          &#34;hs_code_jp&#34;: null,
+          &#34;hs_code_dest&#34;: null,
+          &#34;origin_country&#34;: &#34;JP&#34;,
+          &#34;quantity&#34;: &#34;11500.000&#34;,
+          &#34;quantity_unit&#34;: &#34;KGM&#34;,
+          &#34;net_weight_kg&#34;: &#34;11500.000&#34;,
+          &#34;gross_weight_kg&#34;: &#34;11720.000&#34;,
+          &#34;packages&#34;: 12,
+          &#34;package_type&#34;: &#34;BX&#34;,
+          &#34;unit_price&#34;: &#34;0.98&#34;,
+          &#34;amount&#34;: &#34;11270.00&#34;,
+          &#34;container_number&#34;: &#34;CSQU3054510&#34;
+        }
+      ],
+      &#34;totals&#34;: {
+        &#34;amount&#34;: &#34;24270.00&#34;,
+        &#34;net_weight_kg&#34;: &#34;21500.000&#34;,
+        &#34;gross_weight_kg&#34;: &#34;21840.000&#34;,
+        &#34;packages&#34;: 22
+      },
+      &#34;documents&#34;: [],
+      &#34;events&#34;: [
+        {
+          &#34;type&#34;: &#34;created&#34;,
+          &#34;at&#34;: &#34;2026-11-30T15:00:00+09:00&#34;,
+          &#34;by&#34;: &#34;human&#34;,
+          &#34;note&#34;: null
+        }
+      ],
+      &#34;ext&#34;: {}
+    },
+    &#34;reply_by&#34;: &#34;2026-12-03&#34;,
+    &#34;note&#34;: null
+  }
+}</pre>
+    </details>
+  </article>
+  <article class="entry broker">
+    <div class="meta">2. 2026-12-01 09:02 ｜ 相手側（フォワーダー兼通関業者）（Demo Forwarding &amp; Customs K.K.） → 荷主側（Demo Resource Recovery Co., Ltd.）</div>
+    <div class="what">
+      <strong>見積</strong>
+<code>quote</code><span class="state">状態：完了 <code>TASK_STATE_COMPLETED</code></span>    </div>
+    <div class="carrier">A2A では：タスクの結果（Artifact）として返す ｜ タスク <code>76ba53c8</code></div>
+    <ul class="facts">
+      <li>見積番号：Q-0001</li>
+      <li>料金：Ocean freight (sample tariff): 85000.00 JPY<span class="tag rule">規則による計算</span></li>
+      <li>料金：Terminal handling (sample tariff): 32000.00 JPY<span class="tag rule">規則による計算</span></li>
+      <li>料金：Export customs clearance (sample tariff): 11800.00 JPY<span class="tag rule">規則による計算</span></li>
+      <li>料金：Documentation (sample tariff): 5500.00 JPY<span class="tag rule">規則による計算</span></li>
+      <li>合計：134300.00 JPY<span class="tag rule">規則による計算</span></li>
+      <li>見積の有効期限：2026-12-15<span class="tag rule">規則による計算</span></li>
+      <li>メモ：Mock quote calculated from a fixed sample tariff. It is not a real offer.</li>
+    </ul>
+    <details>
+      <summary>封筒の中身（JSON）を見る</summary>
+      <pre>{
+  &#34;profile&#34;: &#34;trade-agent-profile&#34;,
+  &#34;profile_version&#34;: &#34;0.1.0&#34;,
+  &#34;message_type&#34;: &#34;quote&#34;,
+  &#34;message_id&#34;: &#34;bc813ee0-3072-56e6-bacc-69cc0e395e58&#34;,
+  &#34;correlation_id&#34;: &#34;00363643-2efa-53f9-b2fd-a1d715f6fa0d&#34;,
+  &#34;in_reply_to&#34;: &#34;585446ba-cc74-5587-ba4e-f6aa75ab3be2&#34;,
+  &#34;sent_at&#34;: &#34;2026-12-01T09:02:00+09:00&#34;,
+  &#34;sender&#34;: {
+    &#34;role&#34;: &#34;forwarder&#34;,
+    &#34;name&#34;: &#34;Demo Forwarding &amp; Customs K.K.&#34;,
+    &#34;id&#34;: &#34;demo-forwarder-broker&#34;
+  },
+  &#34;payload&#34;: {
+    &#34;shipment_id&#34;: &#34;SHP-2026-0100&#34;,
+    &#34;quote_number&#34;: &#34;Q-0001&#34;,
+    &#34;currency&#34;: &#34;JPY&#34;,
+    &#34;charges&#34;: [
+      {
+        &#34;name&#34;: &#34;Ocean freight (sample tariff)&#34;,
+        &#34;amount&#34;: &#34;85000.00&#34;
+      },
+      {
+        &#34;name&#34;: &#34;Terminal handling (sample tariff)&#34;,
+        &#34;amount&#34;: &#34;32000.00&#34;
+      },
+      {
+        &#34;name&#34;: &#34;Export customs clearance (sample tariff)&#34;,
+        &#34;amount&#34;: &#34;11800.00&#34;
+      },
+      {
+        &#34;name&#34;: &#34;Documentation (sample tariff)&#34;,
+        &#34;amount&#34;: &#34;5500.00&#34;
+      }
+    ],
+    &#34;total&#34;: &#34;134300.00&#34;,
+    &#34;valid_until&#34;: &#34;2026-12-15&#34;,
+    &#34;note&#34;: &#34;Mock quote calculated from a fixed sample tariff. It is not a real offer.&#34;
+  }
+}</pre>
+    </details>
+  </article>
+</section>
+<section>
+  <h3>2. ブッキング</h3>
+  <p>荷主側が見積を受け入れて、ブッキングを頼みます。相手側はブッキング番号と日程を返します。</p>
+  <article class="entry shipper">
+    <div class="meta">3. 2026-12-01 14:00 ｜ 荷主側（Demo Resource Recovery Co., Ltd.） → 相手側（フォワーダー兼通関業者）（Demo Forwarding &amp; Customs K.K.）</div>
+    <div class="what">
+      <strong>ブッキング依頼</strong>
+<code>booking_request</code>    </div>
+    <div class="carrier">A2A では：Message の Part 1つ（data に封筒、mediaType は application/json）で送る</div>
+    <ul class="facts">
+      <li>船積みID：SHP-2026-0100</li>
+      <li>経路：JPUKB → CNXMN（sea）</li>
+      <li>貨物：明細 2件、コンテナ 1本、総重量 21840.000 kg</li>
+      <li>見積番号：Q-0001</li>
+    </ul>
+    <details>
+      <summary>封筒の中身（JSON）を見る</summary>
+      <pre>{
+  &#34;profile&#34;: &#34;trade-agent-profile&#34;,
+  &#34;profile_version&#34;: &#34;0.1.0&#34;,
+  &#34;message_type&#34;: &#34;booking_request&#34;,
+  &#34;message_id&#34;: &#34;9dce358c-0ace-589b-8665-3857305b67a4&#34;,
+  &#34;correlation_id&#34;: &#34;00363643-2efa-53f9-b2fd-a1d715f6fa0d&#34;,
+  &#34;in_reply_to&#34;: &#34;bc813ee0-3072-56e6-bacc-69cc0e395e58&#34;,
+  &#34;sent_at&#34;: &#34;2026-12-01T14:00:00+09:00&#34;,
+  &#34;sender&#34;: {
+    &#34;role&#34;: &#34;shipper&#34;,
+    &#34;name&#34;: &#34;Demo Resource Recovery Co., Ltd.&#34;,
+    &#34;id&#34;: &#34;demo-shipper&#34;
+  },
+  &#34;payload&#34;: {
+    &#34;shipment&#34;: {
+      &#34;contract_version&#34;: &#34;0.1.0&#34;,
+      &#34;shipment_id&#34;: &#34;SHP-2026-0100&#34;,
+      &#34;direction&#34;: &#34;export&#34;,
+      &#34;status&#34;: &#34;draft&#34;,
+      &#34;parties&#34;: {
+        &#34;shipper&#34;: {
+          &#34;name&#34;: &#34;Demo Resource Recovery Co., Ltd.&#34;,
+          &#34;address&#34;: &#34;3-3 Demo, Osaka&#34;,
+          &#34;country&#34;: &#34;JP&#34;
+        },
+        &#34;exporter&#34;: {
+          &#34;name&#34;: &#34;Demo Resource Recovery Co., Ltd.&#34;,
+          &#34;address&#34;: &#34;3-3 Demo, Osaka&#34;,
+          &#34;country&#34;: &#34;JP&#34;
+        },
+        &#34;consignee&#34;: {
+          &#34;name&#34;: &#34;Sample Trading (Shanghai) Co., Ltd.&#34;,
+          &#34;address&#34;: &#34;1 Sample Rd, Shanghai&#34;,
+          &#34;country&#34;: &#34;CN&#34;
+        }
+      },
+      &#34;trade_terms&#34;: {
+        &#34;incoterms&#34;: &#34;CIF&#34;,
+        &#34;incoterms_version&#34;: &#34;2020&#34;,
+        &#34;place&#34;: &#34;CNXMN&#34;,
+        &#34;currency&#34;: &#34;USD&#34;,
+        &#34;payment_terms&#34;: &#34;T/T in advance&#34;
+      },
+      &#34;transport&#34;: {
+        &#34;mode&#34;: &#34;sea&#34;,
+        &#34;port_of_loading&#34;: &#34;JPUKB&#34;,
+        &#34;port_of_discharge&#34;: &#34;CNXMN&#34;,
+        &#34;etd&#34;: &#34;2026-12-11&#34;,
+        &#34;eta&#34;: &#34;2026-12-16&#34;,
+        &#34;containers&#34;: [
+          {
+            &#34;number&#34;: &#34;CSQU3054510&#34;,
+            &#34;iso_type&#34;: &#34;22G1&#34;,
+            &#34;seals&#34;: [
+              &#34;SL000014&#34;
+            ],
+            &#34;gross_weight_kg&#34;: &#34;21840.000&#34;
+          }
+        ]
+      },
+      &#34;lines&#34;: [
+        {
+          &#34;line_no&#34;: 1,
+          &#34;description&#34;: &#34;Aluminium scrap (sample)&#34;,
+          &#34;hs_code_jp&#34;: null,
+          &#34;hs_code_dest&#34;: null,
+          &#34;origin_country&#34;: &#34;JP&#34;,
+          &#34;quantity&#34;: &#34;10000.000&#34;,
+          &#34;quantity_unit&#34;: &#34;KGM&#34;,
+          &#34;net_weight_kg&#34;: &#34;10000.000&#34;,
+          &#34;gross_weight_kg&#34;: &#34;10120.000&#34;,
+          &#34;packages&#34;: 10,
+          &#34;package_type&#34;: &#34;BG&#34;,
+          &#34;unit_price&#34;: &#34;1.30&#34;,
+          &#34;amount&#34;: &#34;13000.00&#34;,
+          &#34;container_number&#34;: &#34;CSQU3054510&#34;
+        },
+        {
+          &#34;line_no&#34;: 2,
+          &#34;description&#34;: &#34;Stainless steel scrap (sample)&#34;,
+          &#34;hs_code_jp&#34;: null,
+          &#34;hs_code_dest&#34;: null,
+          &#34;origin_country&#34;: &#34;JP&#34;,
+          &#34;quantity&#34;: &#34;11500.000&#34;,
+          &#34;quantity_unit&#34;: &#34;KGM&#34;,
+          &#34;net_weight_kg&#34;: &#34;11500.000&#34;,
+          &#34;gross_weight_kg&#34;: &#34;11720.000&#34;,
+          &#34;packages&#34;: 12,
+          &#34;package_type&#34;: &#34;BX&#34;,
+          &#34;unit_price&#34;: &#34;0.98&#34;,
+          &#34;amount&#34;: &#34;11270.00&#34;,
+          &#34;container_number&#34;: &#34;CSQU3054510&#34;
+        }
+      ],
+      &#34;totals&#34;: {
+        &#34;amount&#34;: &#34;24270.00&#34;,
+        &#34;net_weight_kg&#34;: &#34;21500.000&#34;,
+        &#34;gross_weight_kg&#34;: &#34;21840.000&#34;,
+        &#34;packages&#34;: 22
+      },
+      &#34;documents&#34;: [],
+      &#34;events&#34;: [
+        {
+          &#34;type&#34;: &#34;created&#34;,
+          &#34;at&#34;: &#34;2026-11-30T15:00:00+09:00&#34;,
+          &#34;by&#34;: &#34;human&#34;,
+          &#34;note&#34;: null
+        }
+      ],
+      &#34;ext&#34;: {}
+    },
+    &#34;quote_number&#34;: &#34;Q-0001&#34;,
+    &#34;note&#34;: null
+  }
+}</pre>
+    </details>
+  </article>
+  <article class="entry broker">
+    <div class="meta">4. 2026-12-01 14:02 ｜ 相手側（フォワーダー兼通関業者）（Demo Forwarding &amp; Customs K.K.） → 荷主側（Demo Resource Recovery Co., Ltd.）</div>
+    <div class="what">
+      <strong>ブッキング確認</strong>
+<code>booking_confirmation</code><span class="state">状態：完了 <code>TASK_STATE_COMPLETED</code></span>    </div>
+    <div class="carrier">A2A では：タスクの結果（Artifact）として返す ｜ タスク <code>daf8b26f</code></div>
+    <ul class="facts">
+      <li>ブッキング番号：BK-0001</li>
+      <li>出発予定日：2026-12-11<span class="tag rule">規則による計算</span></li>
+      <li>到着予定日：2026-12-16<span class="tag rule">規則による計算</span></li>
+      <li>貨物の搬入期限：2026-12-09T16:00:00+09:00<span class="tag rule">規則による計算</span></li>
+    </ul>
+    <details>
+      <summary>封筒の中身（JSON）を見る</summary>
+      <pre>{
+  &#34;profile&#34;: &#34;trade-agent-profile&#34;,
+  &#34;profile_version&#34;: &#34;0.1.0&#34;,
+  &#34;message_type&#34;: &#34;booking_confirmation&#34;,
+  &#34;message_id&#34;: &#34;d1223f96-53f9-5f8a-88bc-a1a9c86230b9&#34;,
+  &#34;correlation_id&#34;: &#34;00363643-2efa-53f9-b2fd-a1d715f6fa0d&#34;,
+  &#34;in_reply_to&#34;: &#34;9dce358c-0ace-589b-8665-3857305b67a4&#34;,
+  &#34;sent_at&#34;: &#34;2026-12-01T14:02:00+09:00&#34;,
+  &#34;sender&#34;: {
+    &#34;role&#34;: &#34;forwarder&#34;,
+    &#34;name&#34;: &#34;Demo Forwarding &amp; Customs K.K.&#34;,
+    &#34;id&#34;: &#34;demo-forwarder-broker&#34;
+  },
+  &#34;payload&#34;: {
+    &#34;shipment_id&#34;: &#34;SHP-2026-0100&#34;,
+    &#34;booking_number&#34;: &#34;BK-0001&#34;,
+    &#34;etd&#34;: &#34;2026-12-11&#34;,
+    &#34;eta&#34;: &#34;2026-12-16&#34;,
+    &#34;cargo_cutoff_at&#34;: &#34;2026-12-09T16:00:00+09:00&#34;,
+    &#34;note&#34;: null
+  }
+}</pre>
+    </details>
+  </article>
+</section>
+<section>
+  <h3>3. 書類の提出と、食い違いの通知</h3>
+  <p>荷主側が、書類から読み取った値をつけて船積みのデータを出します。パッキングリストの総重量が正本と違っていたので、相手側は食い違いを知らせ、直して送り直すよう求めます。</p>
+  <article class="entry shipper">
+    <div class="meta">5. 2026-12-07 10:00 ｜ 荷主側（Demo Resource Recovery Co., Ltd.） → 相手側（フォワーダー兼通関業者）（Demo Forwarding &amp; Customs K.K.）</div>
+    <div class="what">
+      <strong>書類の提出</strong>
+<code>document_submission</code>    </div>
+    <div class="carrier">A2A では：Message の Part 1つ（data に封筒、mediaType は application/json）で送る</div>
+    <ul class="facts">
+      <li>船積みID：SHP-2026-0100</li>
+      <li>経路：JPUKB → CNXMN（sea）</li>
+      <li>貨物：明細 2件、コンテナ 1本、総重量 21840.000 kg</li>
+      <li>書類：INV-0100, PL-0100</li>
+    </ul>
+    <details>
+      <summary>封筒の中身（JSON）を見る</summary>
+      <pre>{
+  &#34;profile&#34;: &#34;trade-agent-profile&#34;,
+  &#34;profile_version&#34;: &#34;0.1.0&#34;,
+  &#34;message_type&#34;: &#34;document_submission&#34;,
+  &#34;message_id&#34;: &#34;c3a3bb63-3365-5f62-8696-20cad0349701&#34;,
+  &#34;correlation_id&#34;: &#34;00363643-2efa-53f9-b2fd-a1d715f6fa0d&#34;,
+  &#34;sent_at&#34;: &#34;2026-12-07T10:00:00+09:00&#34;,
+  &#34;sender&#34;: {
+    &#34;role&#34;: &#34;shipper&#34;,
+    &#34;name&#34;: &#34;Demo Resource Recovery Co., Ltd.&#34;,
+    &#34;id&#34;: &#34;demo-shipper&#34;
+  },
+  &#34;payload&#34;: {
+    &#34;shipment&#34;: {
+      &#34;contract_version&#34;: &#34;0.1.0&#34;,
+      &#34;shipment_id&#34;: &#34;SHP-2026-0100&#34;,
+      &#34;direction&#34;: &#34;export&#34;,
+      &#34;status&#34;: &#34;checked&#34;,
+      &#34;parties&#34;: {
+        &#34;shipper&#34;: {
+          &#34;name&#34;: &#34;Demo Resource Recovery Co., Ltd.&#34;,
+          &#34;address&#34;: &#34;3-3 Demo, Osaka&#34;,
+          &#34;country&#34;: &#34;JP&#34;
+        },
+        &#34;exporter&#34;: {
+          &#34;name&#34;: &#34;Demo Resource Recovery Co., Ltd.&#34;,
+          &#34;address&#34;: &#34;3-3 Demo, Osaka&#34;,
+          &#34;country&#34;: &#34;JP&#34;
+        },
+        &#34;consignee&#34;: {
+          &#34;name&#34;: &#34;Sample Trading (Shanghai) Co., Ltd.&#34;,
+          &#34;address&#34;: &#34;1 Sample Rd, Shanghai&#34;,
+          &#34;country&#34;: &#34;CN&#34;
+        }
+      },
+      &#34;trade_terms&#34;: {
+        &#34;incoterms&#34;: &#34;CIF&#34;,
+        &#34;incoterms_version&#34;: &#34;2020&#34;,
+        &#34;place&#34;: &#34;CNXMN&#34;,
+        &#34;currency&#34;: &#34;USD&#34;,
+        &#34;payment_terms&#34;: &#34;T/T in advance&#34;
+      },
+      &#34;transport&#34;: {
+        &#34;mode&#34;: &#34;sea&#34;,
+        &#34;port_of_loading&#34;: &#34;JPUKB&#34;,
+        &#34;port_of_discharge&#34;: &#34;CNXMN&#34;,
+        &#34;etd&#34;: &#34;2026-12-11&#34;,
+        &#34;eta&#34;: &#34;2026-12-16&#34;,
+        &#34;containers&#34;: [
+          {
+            &#34;number&#34;: &#34;CSQU3054510&#34;,
+            &#34;iso_type&#34;: &#34;22G1&#34;,
+            &#34;seals&#34;: [
+              &#34;SL000014&#34;
+            ],
+            &#34;gross_weight_kg&#34;: &#34;21840.000&#34;
+          }
+        ]
+      },
+      &#34;lines&#34;: [
+        {
+          &#34;line_no&#34;: 1,
+          &#34;description&#34;: &#34;Aluminium scrap (sample)&#34;,
+          &#34;hs_code_jp&#34;: null,
+          &#34;hs_code_dest&#34;: null,
+          &#34;origin_country&#34;: &#34;JP&#34;,
+          &#34;quantity&#34;: &#34;10000.000&#34;,
+          &#34;quantity_unit&#34;: &#34;KGM&#34;,
+          &#34;net_weight_kg&#34;: &#34;10000.000&#34;,
+          &#34;gross_weight_kg&#34;: &#34;10120.000&#34;,
+          &#34;packages&#34;: 10,
+          &#34;package_type&#34;: &#34;BG&#34;,
+          &#34;unit_price&#34;: &#34;1.30&#34;,
+          &#34;amount&#34;: &#34;13000.00&#34;,
+          &#34;container_number&#34;: &#34;CSQU3054510&#34;
+        },
+        {
+          &#34;line_no&#34;: 2,
+          &#34;description&#34;: &#34;Stainless steel scrap (sample)&#34;,
+          &#34;hs_code_jp&#34;: null,
+          &#34;hs_code_dest&#34;: null,
+          &#34;origin_country&#34;: &#34;JP&#34;,
+          &#34;quantity&#34;: &#34;11500.000&#34;,
+          &#34;quantity_unit&#34;: &#34;KGM&#34;,
+          &#34;net_weight_kg&#34;: &#34;11500.000&#34;,
+          &#34;gross_weight_kg&#34;: &#34;11720.000&#34;,
+          &#34;packages&#34;: 12,
+          &#34;package_type&#34;: &#34;BX&#34;,
+          &#34;unit_price&#34;: &#34;0.98&#34;,
+          &#34;amount&#34;: &#34;11270.00&#34;,
+          &#34;container_number&#34;: &#34;CSQU3054510&#34;
+        }
+      ],
+      &#34;totals&#34;: {
+        &#34;amount&#34;: &#34;24270.00&#34;,
+        &#34;net_weight_kg&#34;: &#34;21500.000&#34;,
+        &#34;gross_weight_kg&#34;: &#34;21840.000&#34;,
+        &#34;packages&#34;: 22
+      },
+      &#34;documents&#34;: [
+        {
+          &#34;doc_type&#34;: &#34;commercial_invoice&#34;,
+          &#34;doc_number&#34;: &#34;INV-0100&#34;,
+          &#34;issue_date&#34;: &#34;2026-12-05&#34;,
+          &#34;file&#34;: &#34;samples/docs/INV-0100.pdf&#34;,
+          &#34;sha256&#34;: null,
+          &#34;fields&#34;: {
+            &#34;totals.amount&#34;: {
+              &#34;value&#34;: &#34;24270.00&#34;,
+              &#34;page&#34;: 1,
+              &#34;bbox&#34;: [
+                400.0,
+                600.0,
+                520.0,
+                614.0
+              ],
+              &#34;extracted_by&#34;: &#34;ai&#34;,
+              &#34;confidence&#34;: 0.95
+            }
+          }
+        },
+        {
+          &#34;doc_type&#34;: &#34;packing_list&#34;,
+          &#34;doc_number&#34;: &#34;PL-0100&#34;,
+          &#34;issue_date&#34;: &#34;2026-12-05&#34;,
+          &#34;file&#34;: &#34;samples/docs/PL-0100.pdf&#34;,
+          &#34;sha256&#34;: null,
+          &#34;fields&#34;: {
+            &#34;totals.gross_weight_kg&#34;: {
+              &#34;value&#34;: &#34;21480.000&#34;,
+              &#34;page&#34;: 1,
+              &#34;bbox&#34;: null,
+              &#34;extracted_by&#34;: &#34;human&#34;,
+              &#34;confidence&#34;: null
+            },
+            &#34;totals.packages&#34;: {
+              &#34;value&#34;: 22,
+              &#34;page&#34;: 1,
+              &#34;bbox&#34;: null,
+              &#34;extracted_by&#34;: &#34;human&#34;,
+              &#34;confidence&#34;: null
+            }
+          }
+        }
+      ],
+      &#34;events&#34;: [
+        {
+          &#34;type&#34;: &#34;created&#34;,
+          &#34;at&#34;: &#34;2026-11-30T15:00:00+09:00&#34;,
+          &#34;by&#34;: &#34;human&#34;,
+          &#34;note&#34;: null
+        },
+        {
+          &#34;type&#34;: &#34;checked&#34;,
+          &#34;at&#34;: &#34;2026-12-06T11:00:00+09:00&#34;,
+          &#34;by&#34;: &#34;rule&#34;,
+          &#34;note&#34;: null
+        }
+      ],
+      &#34;ext&#34;: {}
+    },
+    &#34;note&#34;: null
+  }
+}</pre>
+    </details>
+  </article>
+  <article class="entry broker">
+    <div class="meta">6. 2026-12-07 10:02 ｜ 相手側（フォワーダー兼通関業者）（Demo Forwarding &amp; Customs K.K.） → 荷主側（Demo Resource Recovery Co., Ltd.）</div>
+    <div class="what">
+      <strong>食い違いの通知</strong>
+<code>discrepancy_notice</code><span class="state">状態：入力待ち（直して送り直す） <code>TASK_STATE_INPUT_REQUIRED</code></span>    </div>
+    <div class="carrier">A2A では：タスクの状態に添える Message として返す ｜ タスク <code>403d1e12</code></div>
+    <ul class="facts">
+      <li>食い違い：PL-0100／totals.gross_weight_kg：書類は 21480.000、正本は 21840.000<span class="tag rule">規則による計算</span></li>
+      <li>メモ：Please correct the documents or the shipment data and submit again.</li>
+    </ul>
+    <details>
+      <summary>封筒の中身（JSON）を見る</summary>
+      <pre>{
+  &#34;profile&#34;: &#34;trade-agent-profile&#34;,
+  &#34;profile_version&#34;: &#34;0.1.0&#34;,
+  &#34;message_type&#34;: &#34;discrepancy_notice&#34;,
+  &#34;message_id&#34;: &#34;8b24522c-b5c3-5e38-aa7c-82c1fbb8fe97&#34;,
+  &#34;correlation_id&#34;: &#34;00363643-2efa-53f9-b2fd-a1d715f6fa0d&#34;,
+  &#34;in_reply_to&#34;: &#34;c3a3bb63-3365-5f62-8696-20cad0349701&#34;,
+  &#34;sent_at&#34;: &#34;2026-12-07T10:02:00+09:00&#34;,
+  &#34;sender&#34;: {
+    &#34;role&#34;: &#34;customs_broker&#34;,
+    &#34;name&#34;: &#34;Demo Forwarding &amp; Customs K.K.&#34;,
+    &#34;id&#34;: &#34;demo-forwarder-broker&#34;
+  },
+  &#34;payload&#34;: {
+    &#34;shipment_id&#34;: &#34;SHP-2026-0100&#34;,
+    &#34;discrepancies&#34;: [
+      {
+        &#34;doc_type&#34;: &#34;packing_list&#34;,
+        &#34;doc_number&#34;: &#34;PL-0100&#34;,
+        &#34;path&#34;: &#34;totals.gross_weight_kg&#34;,
+        &#34;document_value&#34;: &#34;21480.000&#34;,
+        &#34;authoritative_value&#34;: &#34;21840.000&#34;
+      }
+    ],
+    &#34;note&#34;: &#34;Please correct the documents or the shipment data and submit again.&#34;
+  }
+}</pre>
+    </details>
+  </article>
+</section>
+<section>
+  <h3>4. 書類の再提出と、申告の下書き</h3>
+  <p>荷主側が、直した書類で、同じタスクの続きとして出し直します。食い違いがなくなったので、相手側は申告の下書き（模擬）を返します。</p>
+  <article class="entry shipper">
+    <div class="meta">7. 2026-12-08 09:30 ｜ 荷主側（Demo Resource Recovery Co., Ltd.） → 相手側（フォワーダー兼通関業者）（Demo Forwarding &amp; Customs K.K.）</div>
+    <div class="what">
+      <strong>書類の提出</strong>
+<code>document_submission</code>    </div>
+    <div class="carrier">A2A では：Message の Part 1つ（data に封筒、mediaType は application/json）で送る</div>
+    <ul class="facts">
+      <li>船積みID：SHP-2026-0100</li>
+      <li>経路：JPUKB → CNXMN（sea）</li>
+      <li>貨物：明細 2件、コンテナ 1本、総重量 21840.000 kg</li>
+      <li>書類：INV-0100, PL-0100</li>
+      <li>メモ：The packing list was reissued with the correct gross weight.</li>
+    </ul>
+    <details>
+      <summary>封筒の中身（JSON）を見る</summary>
+      <pre>{
+  &#34;profile&#34;: &#34;trade-agent-profile&#34;,
+  &#34;profile_version&#34;: &#34;0.1.0&#34;,
+  &#34;message_type&#34;: &#34;document_submission&#34;,
+  &#34;message_id&#34;: &#34;a58cb618-2222-5b6d-b017-29ec6462287f&#34;,
+  &#34;correlation_id&#34;: &#34;00363643-2efa-53f9-b2fd-a1d715f6fa0d&#34;,
+  &#34;in_reply_to&#34;: &#34;8b24522c-b5c3-5e38-aa7c-82c1fbb8fe97&#34;,
+  &#34;sent_at&#34;: &#34;2026-12-08T09:30:00+09:00&#34;,
+  &#34;sender&#34;: {
+    &#34;role&#34;: &#34;shipper&#34;,
+    &#34;name&#34;: &#34;Demo Resource Recovery Co., Ltd.&#34;,
+    &#34;id&#34;: &#34;demo-shipper&#34;
+  },
+  &#34;payload&#34;: {
+    &#34;shipment&#34;: {
+      &#34;contract_version&#34;: &#34;0.1.0&#34;,
+      &#34;shipment_id&#34;: &#34;SHP-2026-0100&#34;,
+      &#34;direction&#34;: &#34;export&#34;,
+      &#34;status&#34;: &#34;checked&#34;,
+      &#34;parties&#34;: {
+        &#34;shipper&#34;: {
+          &#34;name&#34;: &#34;Demo Resource Recovery Co., Ltd.&#34;,
+          &#34;address&#34;: &#34;3-3 Demo, Osaka&#34;,
+          &#34;country&#34;: &#34;JP&#34;
+        },
+        &#34;exporter&#34;: {
+          &#34;name&#34;: &#34;Demo Resource Recovery Co., Ltd.&#34;,
+          &#34;address&#34;: &#34;3-3 Demo, Osaka&#34;,
+          &#34;country&#34;: &#34;JP&#34;
+        },
+        &#34;consignee&#34;: {
+          &#34;name&#34;: &#34;Sample Trading (Shanghai) Co., Ltd.&#34;,
+          &#34;address&#34;: &#34;1 Sample Rd, Shanghai&#34;,
+          &#34;country&#34;: &#34;CN&#34;
+        }
+      },
+      &#34;trade_terms&#34;: {
+        &#34;incoterms&#34;: &#34;CIF&#34;,
+        &#34;incoterms_version&#34;: &#34;2020&#34;,
+        &#34;place&#34;: &#34;CNXMN&#34;,
+        &#34;currency&#34;: &#34;USD&#34;,
+        &#34;payment_terms&#34;: &#34;T/T in advance&#34;
+      },
+      &#34;transport&#34;: {
+        &#34;mode&#34;: &#34;sea&#34;,
+        &#34;port_of_loading&#34;: &#34;JPUKB&#34;,
+        &#34;port_of_discharge&#34;: &#34;CNXMN&#34;,
+        &#34;etd&#34;: &#34;2026-12-11&#34;,
+        &#34;eta&#34;: &#34;2026-12-16&#34;,
+        &#34;containers&#34;: [
+          {
+            &#34;number&#34;: &#34;CSQU3054510&#34;,
+            &#34;iso_type&#34;: &#34;22G1&#34;,
+            &#34;seals&#34;: [
+              &#34;SL000014&#34;
+            ],
+            &#34;gross_weight_kg&#34;: &#34;21840.000&#34;
+          }
+        ]
+      },
+      &#34;lines&#34;: [
+        {
+          &#34;line_no&#34;: 1,
+          &#34;description&#34;: &#34;Aluminium scrap (sample)&#34;,
+          &#34;hs_code_jp&#34;: null,
+          &#34;hs_code_dest&#34;: null,
+          &#34;origin_country&#34;: &#34;JP&#34;,
+          &#34;quantity&#34;: &#34;10000.000&#34;,
+          &#34;quantity_unit&#34;: &#34;KGM&#34;,
+          &#34;net_weight_kg&#34;: &#34;10000.000&#34;,
+          &#34;gross_weight_kg&#34;: &#34;10120.000&#34;,
+          &#34;packages&#34;: 10,
+          &#34;package_type&#34;: &#34;BG&#34;,
+          &#34;unit_price&#34;: &#34;1.30&#34;,
+          &#34;amount&#34;: &#34;13000.00&#34;,
+          &#34;container_number&#34;: &#34;CSQU3054510&#34;
+        },
+        {
+          &#34;line_no&#34;: 2,
+          &#34;description&#34;: &#34;Stainless steel scrap (sample)&#34;,
+          &#34;hs_code_jp&#34;: null,
+          &#34;hs_code_dest&#34;: null,
+          &#34;origin_country&#34;: &#34;JP&#34;,
+          &#34;quantity&#34;: &#34;11500.000&#34;,
+          &#34;quantity_unit&#34;: &#34;KGM&#34;,
+          &#34;net_weight_kg&#34;: &#34;11500.000&#34;,
+          &#34;gross_weight_kg&#34;: &#34;11720.000&#34;,
+          &#34;packages&#34;: 12,
+          &#34;package_type&#34;: &#34;BX&#34;,
+          &#34;unit_price&#34;: &#34;0.98&#34;,
+          &#34;amount&#34;: &#34;11270.00&#34;,
+          &#34;container_number&#34;: &#34;CSQU3054510&#34;
+        }
+      ],
+      &#34;totals&#34;: {
+        &#34;amount&#34;: &#34;24270.00&#34;,
+        &#34;net_weight_kg&#34;: &#34;21500.000&#34;,
+        &#34;gross_weight_kg&#34;: &#34;21840.000&#34;,
+        &#34;packages&#34;: 22
+      },
+      &#34;documents&#34;: [
+        {
+          &#34;doc_type&#34;: &#34;commercial_invoice&#34;,
+          &#34;doc_number&#34;: &#34;INV-0100&#34;,
+          &#34;issue_date&#34;: &#34;2026-12-05&#34;,
+          &#34;file&#34;: &#34;samples/docs/INV-0100.pdf&#34;,
+          &#34;sha256&#34;: null,
+          &#34;fields&#34;: {
+            &#34;totals.amount&#34;: {
+              &#34;value&#34;: &#34;24270.00&#34;,
+              &#34;page&#34;: 1,
+              &#34;bbox&#34;: [
+                400.0,
+                600.0,
+                520.0,
+                614.0
+              ],
+              &#34;extracted_by&#34;: &#34;ai&#34;,
+              &#34;confidence&#34;: 0.95
+            }
+          }
+        },
+        {
+          &#34;doc_type&#34;: &#34;packing_list&#34;,
+          &#34;doc_number&#34;: &#34;PL-0100&#34;,
+          &#34;issue_date&#34;: &#34;2026-12-05&#34;,
+          &#34;file&#34;: &#34;samples/docs/PL-0100.pdf&#34;,
+          &#34;sha256&#34;: null,
+          &#34;fields&#34;: {
+            &#34;totals.gross_weight_kg&#34;: {
+              &#34;value&#34;: &#34;21840.000&#34;,
+              &#34;page&#34;: 1,
+              &#34;bbox&#34;: null,
+              &#34;extracted_by&#34;: &#34;human&#34;,
+              &#34;confidence&#34;: null
+            },
+            &#34;totals.packages&#34;: {
+              &#34;value&#34;: 22,
+              &#34;page&#34;: 1,
+              &#34;bbox&#34;: null,
+              &#34;extracted_by&#34;: &#34;human&#34;,
+              &#34;confidence&#34;: null
+            }
+          }
+        }
+      ],
+      &#34;events&#34;: [
+        {
+          &#34;type&#34;: &#34;created&#34;,
+          &#34;at&#34;: &#34;2026-11-30T15:00:00+09:00&#34;,
+          &#34;by&#34;: &#34;human&#34;,
+          &#34;note&#34;: null
+        },
+        {
+          &#34;type&#34;: &#34;checked&#34;,
+          &#34;at&#34;: &#34;2026-12-06T11:00:00+09:00&#34;,
+          &#34;by&#34;: &#34;rule&#34;,
+          &#34;note&#34;: null
+        }
+      ],
+      &#34;ext&#34;: {}
+    },
+    &#34;note&#34;: &#34;The packing list was reissued with the correct gross weight.&#34;
+  }
+}</pre>
+    </details>
+  </article>
+  <article class="entry broker">
+    <div class="meta">8. 2026-12-08 09:32 ｜ 相手側（フォワーダー兼通関業者）（Demo Forwarding &amp; Customs K.K.） → 荷主側（Demo Resource Recovery Co., Ltd.）</div>
+    <div class="what">
+      <strong>申告の下書き（模擬）</strong>
+<code>declaration_draft</code><span class="state">状態：完了 <code>TASK_STATE_COMPLETED</code></span>    </div>
+    <div class="carrier">A2A では：タスクの結果（Artifact）として返す ｜ タスク <code>403d1e12</code></div>
+    <ul class="facts">
+      <li>下書きの番号：DD-0001</li>
+      <li>注意：これは模擬の下書きです。実際の申告ではなく、どこにも提出していません。</li>
+      <li>輸出者：Demo Resource Recovery Co., Ltd.<span class="tag rule">規則による計算</span></li>
+      <li>荷受人：Sample Trading (Shanghai) Co., Ltd.<span class="tag rule">規則による計算</span></li>
+      <li>経路：JPUKB → CNXMN<span class="tag rule">規則による計算</span></li>
+      <li>出発予定日：2026-12-11<span class="tag rule">規則による計算</span></li>
+      <li>取引条件：CIF<span class="tag rule">規則による計算</span></li>
+      <li>仕入書の金額：24270.00 USD<span class="tag rule">規則による計算</span></li>
+      <li>明細 1：Aluminium scrap (sample)／10000.000 KGM／13000.00<span class="tag rule">規則による計算</span></li>
+      <li>明細 1 の品目番号：空欄（出典で確かめるまで入れない）<span class="tag unverified">未確認</span></li>
+      <li>明細 2：Stainless steel scrap (sample)／11500.000 KGM／11270.00<span class="tag rule">規則による計算</span></li>
+      <li>明細 2 の品目番号：空欄（出典で確かめるまで入れない）<span class="tag unverified">未確認</span></li>
+      <li>メモ：Mock draft for demonstrating the data flow. It is not a customs declaration and nothing has been filed. Items listed in unverified must be confirmed against official sources by a qualified person.</li>
+    </ul>
+    <details>
+      <summary>封筒の中身（JSON）を見る</summary>
+      <pre>{
+  &#34;profile&#34;: &#34;trade-agent-profile&#34;,
+  &#34;profile_version&#34;: &#34;0.1.0&#34;,
+  &#34;message_type&#34;: &#34;declaration_draft&#34;,
+  &#34;message_id&#34;: &#34;de2dbf9d-8f4d-5d4a-93c7-f9e8f6233884&#34;,
+  &#34;correlation_id&#34;: &#34;00363643-2efa-53f9-b2fd-a1d715f6fa0d&#34;,
+  &#34;in_reply_to&#34;: &#34;a58cb618-2222-5b6d-b017-29ec6462287f&#34;,
+  &#34;sent_at&#34;: &#34;2026-12-08T09:32:00+09:00&#34;,
+  &#34;sender&#34;: {
+    &#34;role&#34;: &#34;customs_broker&#34;,
+    &#34;name&#34;: &#34;Demo Forwarding &amp; Customs K.K.&#34;,
+    &#34;id&#34;: &#34;demo-forwarder-broker&#34;
+  },
+  &#34;payload&#34;: {
+    &#34;shipment_id&#34;: &#34;SHP-2026-0100&#34;,
+    &#34;draft_number&#34;: &#34;DD-0001&#34;,
+    &#34;mock&#34;: true,
+    &#34;exporter&#34;: {
+      &#34;name&#34;: &#34;Demo Resource Recovery Co., Ltd.&#34;,
+      &#34;address&#34;: &#34;3-3 Demo, Osaka&#34;,
+      &#34;country&#34;: &#34;JP&#34;
+    },
+    &#34;consignee&#34;: {
+      &#34;name&#34;: &#34;Sample Trading (Shanghai) Co., Ltd.&#34;,
+      &#34;address&#34;: &#34;1 Sample Rd, Shanghai&#34;,
+      &#34;country&#34;: &#34;CN&#34;
+    },
+    &#34;port_of_loading&#34;: &#34;JPUKB&#34;,
+    &#34;port_of_discharge&#34;: &#34;CNXMN&#34;,
+    &#34;etd&#34;: &#34;2026-12-11&#34;,
+    &#34;incoterms&#34;: &#34;CIF&#34;,
+    &#34;currency&#34;: &#34;USD&#34;,
+    &#34;invoice_amount&#34;: &#34;24270.00&#34;,
+    &#34;lines&#34;: [
+      {
+        &#34;line_no&#34;: 1,
+        &#34;description&#34;: &#34;Aluminium scrap (sample)&#34;,
+        &#34;hs_code_jp&#34;: null,
+        &#34;quantity&#34;: &#34;10000.000&#34;,
+        &#34;quantity_unit&#34;: &#34;KGM&#34;,
+        &#34;net_weight_kg&#34;: &#34;10000.000&#34;,
+        &#34;amount&#34;: &#34;13000.00&#34;
+      },
+      {
+        &#34;line_no&#34;: 2,
+        &#34;description&#34;: &#34;Stainless steel scrap (sample)&#34;,
+        &#34;hs_code_jp&#34;: null,
+        &#34;quantity&#34;: &#34;11500.000&#34;,
+        &#34;quantity_unit&#34;: &#34;KGM&#34;,
+        &#34;net_weight_kg&#34;: &#34;11500.000&#34;,
+        &#34;amount&#34;: &#34;11270.00&#34;
+      }
+    ],
+    &#34;unverified&#34;: [
+      &#34;lines[0].hs_code_jp&#34;,
+      &#34;lines[1].hs_code_jp&#34;
+    ],
+    &#34;note&#34;: &#34;Mock draft for demonstrating the data flow. It is not a customs declaration and nothing has been filed. Items listed in unverified must be confirmed against official sources by a qualified person.&#34;
+  }
+}</pre>
+    </details>
+  </article>
+</section>
+<section>
+  <h3>5. 承認</h3>
+  <p>荷主側が、申告の下書きの内容を確かめて承認します。判断するのは人で、ここではその結果をメッセージで伝えています。</p>
+  <article class="entry shipper">
+    <div class="meta">9. 2026-12-08 15:00 ｜ 荷主側（Demo Resource Recovery Co., Ltd.） → 相手側（フォワーダー兼通関業者）（Demo Forwarding &amp; Customs K.K.）</div>
+    <div class="what">
+      <strong>承認</strong>
+<code>approval</code>    </div>
+    <div class="carrier">A2A では：Message の Part 1つ（data に封筒、mediaType は application/json）で送る</div>
+    <ul class="facts">
+      <li>船積みID：SHP-2026-0100</li>
+    </ul>
+    <details>
+      <summary>封筒の中身（JSON）を見る</summary>
+      <pre>{
+  &#34;profile&#34;: &#34;trade-agent-profile&#34;,
+  &#34;profile_version&#34;: &#34;0.1.0&#34;,
+  &#34;message_type&#34;: &#34;approval&#34;,
+  &#34;message_id&#34;: &#34;6a20d50c-770c-5530-9596-3c740594eb86&#34;,
+  &#34;correlation_id&#34;: &#34;00363643-2efa-53f9-b2fd-a1d715f6fa0d&#34;,
+  &#34;in_reply_to&#34;: &#34;de2dbf9d-8f4d-5d4a-93c7-f9e8f6233884&#34;,
+  &#34;sent_at&#34;: &#34;2026-12-08T15:00:00+09:00&#34;,
+  &#34;sender&#34;: {
+    &#34;role&#34;: &#34;shipper&#34;,
+    &#34;name&#34;: &#34;Demo Resource Recovery Co., Ltd.&#34;,
+    &#34;id&#34;: &#34;demo-shipper&#34;
+  },
+  &#34;payload&#34;: {
+    &#34;shipment_id&#34;: &#34;SHP-2026-0100&#34;,
+    &#34;note&#34;: null
+  }
+}</pre>
+    </details>
+  </article>
+  <article class="entry broker">
+    <div class="meta">10. 2026-12-08 15:02 ｜ 相手側（フォワーダー兼通関業者）（Demo Forwarding &amp; Customs K.K.） → 荷主側（Demo Resource Recovery Co., Ltd.）</div>
+    <div class="what">
+      <strong>返事の封筒なし</strong>
+<span class="state">状態：完了 <code>TASK_STATE_COMPLETED</code></span>    </div>
+    <div class="carrier">A2A では：タスクの状態だけを返す ｜ タスク <code>7592f62a</code></div>
+  </article>
+</section>
+<h2>補足：再送・版の不一致・辞退</h2>
+<section>
+  <h3>補足1. 同じメッセージの再送</h3>
+  <p>荷主側が、2のブッキング依頼をそのままもう一度送ります。相手側は処理をやり直さず、最初の結果をそのまま返します。ブッキングが二重に取られることはありません。</p>
+  <article class="entry shipper">
+    <div class="meta">11. 2026-12-09 10:00 ｜ 荷主側（Demo Resource Recovery Co., Ltd.） → 相手側（フォワーダー兼通関業者）（Demo Forwarding &amp; Customs K.K.）</div>
+    <div class="what">
+      <strong>ブッキング依頼</strong>
+<code>booking_request</code>    </div>
+    <div class="carrier">A2A では：Message の Part 1つ（data に封筒、mediaType は application/json）で送る</div>
+<div class="flag">同じ message_id での再送</div>    <ul class="facts">
+      <li>船積みID：SHP-2026-0100</li>
+      <li>経路：JPUKB → CNXMN（sea）</li>
+      <li>貨物：明細 2件、コンテナ 1本、総重量 21840.000 kg</li>
+      <li>見積番号：Q-0001</li>
+    </ul>
+    <details>
+      <summary>封筒の中身（JSON）を見る</summary>
+      <pre>{
+  &#34;profile&#34;: &#34;trade-agent-profile&#34;,
+  &#34;profile_version&#34;: &#34;0.1.0&#34;,
+  &#34;message_type&#34;: &#34;booking_request&#34;,
+  &#34;message_id&#34;: &#34;9dce358c-0ace-589b-8665-3857305b67a4&#34;,
+  &#34;correlation_id&#34;: &#34;00363643-2efa-53f9-b2fd-a1d715f6fa0d&#34;,
+  &#34;in_reply_to&#34;: &#34;bc813ee0-3072-56e6-bacc-69cc0e395e58&#34;,
+  &#34;sent_at&#34;: &#34;2026-12-01T14:00:00+09:00&#34;,
+  &#34;sender&#34;: {
+    &#34;role&#34;: &#34;shipper&#34;,
+    &#34;name&#34;: &#34;Demo Resource Recovery Co., Ltd.&#34;,
+    &#34;id&#34;: &#34;demo-shipper&#34;
+  },
+  &#34;payload&#34;: {
+    &#34;shipment&#34;: {
+      &#34;contract_version&#34;: &#34;0.1.0&#34;,
+      &#34;shipment_id&#34;: &#34;SHP-2026-0100&#34;,
+      &#34;direction&#34;: &#34;export&#34;,
+      &#34;status&#34;: &#34;draft&#34;,
+      &#34;parties&#34;: {
+        &#34;shipper&#34;: {
+          &#34;name&#34;: &#34;Demo Resource Recovery Co., Ltd.&#34;,
+          &#34;address&#34;: &#34;3-3 Demo, Osaka&#34;,
+          &#34;country&#34;: &#34;JP&#34;
+        },
+        &#34;exporter&#34;: {
+          &#34;name&#34;: &#34;Demo Resource Recovery Co., Ltd.&#34;,
+          &#34;address&#34;: &#34;3-3 Demo, Osaka&#34;,
+          &#34;country&#34;: &#34;JP&#34;
+        },
+        &#34;consignee&#34;: {
+          &#34;name&#34;: &#34;Sample Trading (Shanghai) Co., Ltd.&#34;,
+          &#34;address&#34;: &#34;1 Sample Rd, Shanghai&#34;,
+          &#34;country&#34;: &#34;CN&#34;
+        }
+      },
+      &#34;trade_terms&#34;: {
+        &#34;incoterms&#34;: &#34;CIF&#34;,
+        &#34;incoterms_version&#34;: &#34;2020&#34;,
+        &#34;place&#34;: &#34;CNXMN&#34;,
+        &#34;currency&#34;: &#34;USD&#34;,
+        &#34;payment_terms&#34;: &#34;T/T in advance&#34;
+      },
+      &#34;transport&#34;: {
+        &#34;mode&#34;: &#34;sea&#34;,
+        &#34;port_of_loading&#34;: &#34;JPUKB&#34;,
+        &#34;port_of_discharge&#34;: &#34;CNXMN&#34;,
+        &#34;etd&#34;: &#34;2026-12-11&#34;,
+        &#34;eta&#34;: &#34;2026-12-16&#34;,
+        &#34;containers&#34;: [
+          {
+            &#34;number&#34;: &#34;CSQU3054510&#34;,
+            &#34;iso_type&#34;: &#34;22G1&#34;,
+            &#34;seals&#34;: [
+              &#34;SL000014&#34;
+            ],
+            &#34;gross_weight_kg&#34;: &#34;21840.000&#34;
+          }
+        ]
+      },
+      &#34;lines&#34;: [
+        {
+          &#34;line_no&#34;: 1,
+          &#34;description&#34;: &#34;Aluminium scrap (sample)&#34;,
+          &#34;hs_code_jp&#34;: null,
+          &#34;hs_code_dest&#34;: null,
+          &#34;origin_country&#34;: &#34;JP&#34;,
+          &#34;quantity&#34;: &#34;10000.000&#34;,
+          &#34;quantity_unit&#34;: &#34;KGM&#34;,
+          &#34;net_weight_kg&#34;: &#34;10000.000&#34;,
+          &#34;gross_weight_kg&#34;: &#34;10120.000&#34;,
+          &#34;packages&#34;: 10,
+          &#34;package_type&#34;: &#34;BG&#34;,
+          &#34;unit_price&#34;: &#34;1.30&#34;,
+          &#34;amount&#34;: &#34;13000.00&#34;,
+          &#34;container_number&#34;: &#34;CSQU3054510&#34;
+        },
+        {
+          &#34;line_no&#34;: 2,
+          &#34;description&#34;: &#34;Stainless steel scrap (sample)&#34;,
+          &#34;hs_code_jp&#34;: null,
+          &#34;hs_code_dest&#34;: null,
+          &#34;origin_country&#34;: &#34;JP&#34;,
+          &#34;quantity&#34;: &#34;11500.000&#34;,
+          &#34;quantity_unit&#34;: &#34;KGM&#34;,
+          &#34;net_weight_kg&#34;: &#34;11500.000&#34;,
+          &#34;gross_weight_kg&#34;: &#34;11720.000&#34;,
+          &#34;packages&#34;: 12,
+          &#34;package_type&#34;: &#34;BX&#34;,
+          &#34;unit_price&#34;: &#34;0.98&#34;,
+          &#34;amount&#34;: &#34;11270.00&#34;,
+          &#34;container_number&#34;: &#34;CSQU3054510&#34;
+        }
+      ],
+      &#34;totals&#34;: {
+        &#34;amount&#34;: &#34;24270.00&#34;,
+        &#34;net_weight_kg&#34;: &#34;21500.000&#34;,
+        &#34;gross_weight_kg&#34;: &#34;21840.000&#34;,
+        &#34;packages&#34;: 22
+      },
+      &#34;documents&#34;: [],
+      &#34;events&#34;: [
+        {
+          &#34;type&#34;: &#34;created&#34;,
+          &#34;at&#34;: &#34;2026-11-30T15:00:00+09:00&#34;,
+          &#34;by&#34;: &#34;human&#34;,
+          &#34;note&#34;: null
+        }
+      ],
+      &#34;ext&#34;: {}
+    },
+    &#34;quote_number&#34;: &#34;Q-0001&#34;,
+    &#34;note&#34;: null
+  }
+}</pre>
+    </details>
+  </article>
+  <article class="entry broker">
+    <div class="meta">12. 2026-12-09 10:02 ｜ 相手側（フォワーダー兼通関業者）（Demo Forwarding &amp; Customs K.K.） → 荷主側（Demo Resource Recovery Co., Ltd.）</div>
+    <div class="what">
+      <strong>ブッキング確認</strong>
+<code>booking_confirmation</code><span class="state">状態：完了 <code>TASK_STATE_COMPLETED</code></span>    </div>
+    <div class="carrier">A2A では：タスクの結果（Artifact）として返す ｜ タスク <code>daf8b26f</code></div>
+<div class="flag">再送と判定：処理はせず、最初の結果を返した</div>    <ul class="facts">
+      <li>ブッキング番号：BK-0001</li>
+      <li>出発予定日：2026-12-11<span class="tag rule">規則による計算</span></li>
+      <li>到着予定日：2026-12-16<span class="tag rule">規則による計算</span></li>
+      <li>貨物の搬入期限：2026-12-09T16:00:00+09:00<span class="tag rule">規則による計算</span></li>
+    </ul>
+    <details>
+      <summary>封筒の中身（JSON）を見る</summary>
+      <pre>{
+  &#34;profile&#34;: &#34;trade-agent-profile&#34;,
+  &#34;profile_version&#34;: &#34;0.1.0&#34;,
+  &#34;message_type&#34;: &#34;booking_confirmation&#34;,
+  &#34;message_id&#34;: &#34;d1223f96-53f9-5f8a-88bc-a1a9c86230b9&#34;,
+  &#34;correlation_id&#34;: &#34;00363643-2efa-53f9-b2fd-a1d715f6fa0d&#34;,
+  &#34;in_reply_to&#34;: &#34;9dce358c-0ace-589b-8665-3857305b67a4&#34;,
+  &#34;sent_at&#34;: &#34;2026-12-01T14:02:00+09:00&#34;,
+  &#34;sender&#34;: {
+    &#34;role&#34;: &#34;forwarder&#34;,
+    &#34;name&#34;: &#34;Demo Forwarding &amp; Customs K.K.&#34;,
+    &#34;id&#34;: &#34;demo-forwarder-broker&#34;
+  },
+  &#34;payload&#34;: {
+    &#34;shipment_id&#34;: &#34;SHP-2026-0100&#34;,
+    &#34;booking_number&#34;: &#34;BK-0001&#34;,
+    &#34;etd&#34;: &#34;2026-12-11&#34;,
+    &#34;eta&#34;: &#34;2026-12-16&#34;,
+    &#34;cargo_cutoff_at&#34;: &#34;2026-12-09T16:00:00+09:00&#34;,
+    &#34;note&#34;: null
+  }
+}</pre>
+    </details>
+  </article>
+</section>
+<section>
+  <h3>補足2. 版が合わないとき</h3>
+  <p>荷主側が、相手側の扱えない版（0.2.0）でメッセージを送ります。相手側は処理をせず、扱える版を知らせて断ります。</p>
+  <article class="entry shipper">
+    <div class="meta">13. 2026-12-09 10:30 ｜ 荷主側（Demo Resource Recovery Co., Ltd.） → 相手側（フォワーダー兼通関業者）（Demo Forwarding &amp; Customs K.K.）</div>
+    <div class="what">
+      <strong>見積依頼</strong>
+<code>quote_request</code>    </div>
+    <div class="carrier">A2A では：Message の Part 1つ（data に封筒、mediaType は application/json）で送る</div>
+    <ul class="facts">
+      <li>船積みID：SHP-2026-0100</li>
+      <li>経路：JPUKB → CNXMN（sea）</li>
+      <li>貨物：明細 2件、コンテナ 1本、総重量 21840.000 kg</li>
+    </ul>
+    <details>
+      <summary>封筒の中身（JSON）を見る</summary>
+      <pre>{
+  &#34;profile&#34;: &#34;trade-agent-profile&#34;,
+  &#34;profile_version&#34;: &#34;0.2.0&#34;,
+  &#34;message_type&#34;: &#34;quote_request&#34;,
+  &#34;message_id&#34;: &#34;a36d9b15-f36b-5e37-9e28-f12e9897b268&#34;,
+  &#34;correlation_id&#34;: &#34;50b77fe4-7931-5f06-acf2-2cd64ddbab48&#34;,
+  &#34;sent_at&#34;: &#34;2026-12-09T10:30:00+09:00&#34;,
+  &#34;sender&#34;: {
+    &#34;role&#34;: &#34;shipper&#34;,
+    &#34;name&#34;: &#34;Demo Resource Recovery Co., Ltd.&#34;,
+    &#34;id&#34;: &#34;demo-shipper&#34;
+  },
+  &#34;payload&#34;: {
+    &#34;shipment&#34;: {
+      &#34;contract_version&#34;: &#34;0.1.0&#34;,
+      &#34;shipment_id&#34;: &#34;SHP-2026-0100&#34;,
+      &#34;direction&#34;: &#34;export&#34;,
+      &#34;status&#34;: &#34;draft&#34;,
+      &#34;parties&#34;: {
+        &#34;shipper&#34;: {
+          &#34;name&#34;: &#34;Demo Resource Recovery Co., Ltd.&#34;,
+          &#34;address&#34;: &#34;3-3 Demo, Osaka&#34;,
+          &#34;country&#34;: &#34;JP&#34;
+        },
+        &#34;exporter&#34;: {
+          &#34;name&#34;: &#34;Demo Resource Recovery Co., Ltd.&#34;,
+          &#34;address&#34;: &#34;3-3 Demo, Osaka&#34;,
+          &#34;country&#34;: &#34;JP&#34;
+        },
+        &#34;consignee&#34;: {
+          &#34;name&#34;: &#34;Sample Trading (Shanghai) Co., Ltd.&#34;,
+          &#34;address&#34;: &#34;1 Sample Rd, Shanghai&#34;,
+          &#34;country&#34;: &#34;CN&#34;
+        }
+      },
+      &#34;trade_terms&#34;: {
+        &#34;incoterms&#34;: &#34;CIF&#34;,
+        &#34;incoterms_version&#34;: &#34;2020&#34;,
+        &#34;place&#34;: &#34;CNXMN&#34;,
+        &#34;currency&#34;: &#34;USD&#34;,
+        &#34;payment_terms&#34;: &#34;T/T in advance&#34;
+      },
+      &#34;transport&#34;: {
+        &#34;mode&#34;: &#34;sea&#34;,
+        &#34;port_of_loading&#34;: &#34;JPUKB&#34;,
+        &#34;port_of_discharge&#34;: &#34;CNXMN&#34;,
+        &#34;etd&#34;: &#34;2026-12-11&#34;,
+        &#34;eta&#34;: &#34;2026-12-16&#34;,
+        &#34;containers&#34;: [
+          {
+            &#34;number&#34;: &#34;CSQU3054510&#34;,
+            &#34;iso_type&#34;: &#34;22G1&#34;,
+            &#34;seals&#34;: [
+              &#34;SL000014&#34;
+            ],
+            &#34;gross_weight_kg&#34;: &#34;21840.000&#34;
+          }
+        ]
+      },
+      &#34;lines&#34;: [
+        {
+          &#34;line_no&#34;: 1,
+          &#34;description&#34;: &#34;Aluminium scrap (sample)&#34;,
+          &#34;hs_code_jp&#34;: null,
+          &#34;hs_code_dest&#34;: null,
+          &#34;origin_country&#34;: &#34;JP&#34;,
+          &#34;quantity&#34;: &#34;10000.000&#34;,
+          &#34;quantity_unit&#34;: &#34;KGM&#34;,
+          &#34;net_weight_kg&#34;: &#34;10000.000&#34;,
+          &#34;gross_weight_kg&#34;: &#34;10120.000&#34;,
+          &#34;packages&#34;: 10,
+          &#34;package_type&#34;: &#34;BG&#34;,
+          &#34;unit_price&#34;: &#34;1.30&#34;,
+          &#34;amount&#34;: &#34;13000.00&#34;,
+          &#34;container_number&#34;: &#34;CSQU3054510&#34;
+        },
+        {
+          &#34;line_no&#34;: 2,
+          &#34;description&#34;: &#34;Stainless steel scrap (sample)&#34;,
+          &#34;hs_code_jp&#34;: null,
+          &#34;hs_code_dest&#34;: null,
+          &#34;origin_country&#34;: &#34;JP&#34;,
+          &#34;quantity&#34;: &#34;11500.000&#34;,
+          &#34;quantity_unit&#34;: &#34;KGM&#34;,
+          &#34;net_weight_kg&#34;: &#34;11500.000&#34;,
+          &#34;gross_weight_kg&#34;: &#34;11720.000&#34;,
+          &#34;packages&#34;: 12,
+          &#34;package_type&#34;: &#34;BX&#34;,
+          &#34;unit_price&#34;: &#34;0.98&#34;,
+          &#34;amount&#34;: &#34;11270.00&#34;,
+          &#34;container_number&#34;: &#34;CSQU3054510&#34;
+        }
+      ],
+      &#34;totals&#34;: {
+        &#34;amount&#34;: &#34;24270.00&#34;,
+        &#34;net_weight_kg&#34;: &#34;21500.000&#34;,
+        &#34;gross_weight_kg&#34;: &#34;21840.000&#34;,
+        &#34;packages&#34;: 22
+      },
+      &#34;documents&#34;: [],
+      &#34;events&#34;: [
+        {
+          &#34;type&#34;: &#34;created&#34;,
+          &#34;at&#34;: &#34;2026-11-30T15:00:00+09:00&#34;,
+          &#34;by&#34;: &#34;human&#34;,
+          &#34;note&#34;: null
+        }
+      ],
+      &#34;ext&#34;: {}
+    },
+    &#34;reply_by&#34;: null,
+    &#34;note&#34;: null
+  }
+}</pre>
+    </details>
+  </article>
+  <article class="entry broker">
+    <div class="meta">14. 2026-12-09 10:32 ｜ 相手側（フォワーダー兼通関業者）（Demo Forwarding &amp; Customs K.K.） → 荷主側（Demo Resource Recovery Co., Ltd.）</div>
+    <div class="what">
+      <strong>エラー</strong>
+<code>error</code><span class="state">状態：断った <code>TASK_STATE_REJECTED</code></span>    </div>
+    <div class="carrier">A2A では：タスクの状態に添える Message として返す ｜ タスク <code>3e5ea6d1</code></div>
+    <ul class="facts">
+      <li>エラーの種類：PROFILE_VERSION_UNSUPPORTED</li>
+      <li>説明：プロファイルの版が合わないため、処理しませんでした。扱える版は 0.1.0 です。</li>
+      <li>問題の箇所：[PROFILE_VERSION_UNSUPPORTED] profile_version</li>
+    </ul>
+    <details>
+      <summary>封筒の中身（JSON）を見る</summary>
+      <pre>{
+  &#34;profile&#34;: &#34;trade-agent-profile&#34;,
+  &#34;profile_version&#34;: &#34;0.1.0&#34;,
+  &#34;message_type&#34;: &#34;error&#34;,
+  &#34;message_id&#34;: &#34;33597ce3-5d36-552b-86a9-962fddac02eb&#34;,
+  &#34;correlation_id&#34;: &#34;50b77fe4-7931-5f06-acf2-2cd64ddbab48&#34;,
+  &#34;in_reply_to&#34;: &#34;a36d9b15-f36b-5e37-9e28-f12e9897b268&#34;,
+  &#34;sent_at&#34;: &#34;2026-12-09T10:32:00+09:00&#34;,
+  &#34;sender&#34;: {
+    &#34;role&#34;: &#34;forwarder&#34;,
+    &#34;name&#34;: &#34;Demo Forwarding &amp; Customs K.K.&#34;,
+    &#34;id&#34;: &#34;demo-forwarder-broker&#34;
+  },
+  &#34;payload&#34;: {
+    &#34;code&#34;: &#34;PROFILE_VERSION_UNSUPPORTED&#34;,
+    &#34;text&#34;: {
+      &#34;ja&#34;: &#34;プロファイルの版が合わないため、処理しませんでした。扱える版は 0.1.0 です。&#34;,
+      &#34;en&#34;: &#34;The profile version is not supported, so the message was not processed. The supported version is 0.1.0.&#34;
+    },
+    &#34;issues&#34;: [
+      {
+        &#34;code&#34;: &#34;PROFILE_VERSION_UNSUPPORTED&#34;,
+        &#34;path&#34;: &#34;profile_version&#34;
+      }
+    ]
+  }
+}</pre>
+    </details>
+  </article>
+</section>
+<section>
+  <h3>補足3. 見積を断る</h3>
+  <p>別の会話で、荷主側が見積を受け取ったあと、それを断ります。相手側は断られたことを控えて終わります。</p>
+  <article class="entry shipper">
+    <div class="meta">15. 2026-12-09 11:00 ｜ 荷主側（Demo Resource Recovery Co., Ltd.） → 相手側（フォワーダー兼通関業者）（Demo Forwarding &amp; Customs K.K.）</div>
+    <div class="what">
+      <strong>見積依頼</strong>
+<code>quote_request</code>    </div>
+    <div class="carrier">A2A では：Message の Part 1つ（data に封筒、mediaType は application/json）で送る</div>
+    <ul class="facts">
+      <li>船積みID：SHP-2026-0100</li>
+      <li>経路：JPUKB → CNXMN（sea）</li>
+      <li>貨物：明細 2件、コンテナ 1本、総重量 21840.000 kg</li>
+    </ul>
+    <details>
+      <summary>封筒の中身（JSON）を見る</summary>
+      <pre>{
+  &#34;profile&#34;: &#34;trade-agent-profile&#34;,
+  &#34;profile_version&#34;: &#34;0.1.0&#34;,
+  &#34;message_type&#34;: &#34;quote_request&#34;,
+  &#34;message_id&#34;: &#34;11a7185f-65bd-5625-9acd-48f8ce8041d4&#34;,
+  &#34;correlation_id&#34;: &#34;7884fb85-bb37-5304-94f9-d25ffb491969&#34;,
+  &#34;sent_at&#34;: &#34;2026-12-09T11:00:00+09:00&#34;,
+  &#34;sender&#34;: {
+    &#34;role&#34;: &#34;shipper&#34;,
+    &#34;name&#34;: &#34;Demo Resource Recovery Co., Ltd.&#34;,
+    &#34;id&#34;: &#34;demo-shipper&#34;
+  },
+  &#34;payload&#34;: {
+    &#34;shipment&#34;: {
+      &#34;contract_version&#34;: &#34;0.1.0&#34;,
+      &#34;shipment_id&#34;: &#34;SHP-2026-0100&#34;,
+      &#34;direction&#34;: &#34;export&#34;,
+      &#34;status&#34;: &#34;draft&#34;,
+      &#34;parties&#34;: {
+        &#34;shipper&#34;: {
+          &#34;name&#34;: &#34;Demo Resource Recovery Co., Ltd.&#34;,
+          &#34;address&#34;: &#34;3-3 Demo, Osaka&#34;,
+          &#34;country&#34;: &#34;JP&#34;
+        },
+        &#34;exporter&#34;: {
+          &#34;name&#34;: &#34;Demo Resource Recovery Co., Ltd.&#34;,
+          &#34;address&#34;: &#34;3-3 Demo, Osaka&#34;,
+          &#34;country&#34;: &#34;JP&#34;
+        },
+        &#34;consignee&#34;: {
+          &#34;name&#34;: &#34;Sample Trading (Shanghai) Co., Ltd.&#34;,
+          &#34;address&#34;: &#34;1 Sample Rd, Shanghai&#34;,
+          &#34;country&#34;: &#34;CN&#34;
+        }
+      },
+      &#34;trade_terms&#34;: {
+        &#34;incoterms&#34;: &#34;CIF&#34;,
+        &#34;incoterms_version&#34;: &#34;2020&#34;,
+        &#34;place&#34;: &#34;CNXMN&#34;,
+        &#34;currency&#34;: &#34;USD&#34;,
+        &#34;payment_terms&#34;: &#34;T/T in advance&#34;
+      },
+      &#34;transport&#34;: {
+        &#34;mode&#34;: &#34;sea&#34;,
+        &#34;port_of_loading&#34;: &#34;JPUKB&#34;,
+        &#34;port_of_discharge&#34;: &#34;CNXMN&#34;,
+        &#34;etd&#34;: &#34;2026-12-11&#34;,
+        &#34;eta&#34;: &#34;2026-12-16&#34;,
+        &#34;containers&#34;: [
+          {
+            &#34;number&#34;: &#34;CSQU3054510&#34;,
+            &#34;iso_type&#34;: &#34;22G1&#34;,
+            &#34;seals&#34;: [
+              &#34;SL000014&#34;
+            ],
+            &#34;gross_weight_kg&#34;: &#34;21840.000&#34;
+          }
+        ]
+      },
+      &#34;lines&#34;: [
+        {
+          &#34;line_no&#34;: 1,
+          &#34;description&#34;: &#34;Aluminium scrap (sample)&#34;,
+          &#34;hs_code_jp&#34;: null,
+          &#34;hs_code_dest&#34;: null,
+          &#34;origin_country&#34;: &#34;JP&#34;,
+          &#34;quantity&#34;: &#34;10000.000&#34;,
+          &#34;quantity_unit&#34;: &#34;KGM&#34;,
+          &#34;net_weight_kg&#34;: &#34;10000.000&#34;,
+          &#34;gross_weight_kg&#34;: &#34;10120.000&#34;,
+          &#34;packages&#34;: 10,
+          &#34;package_type&#34;: &#34;BG&#34;,
+          &#34;unit_price&#34;: &#34;1.30&#34;,
+          &#34;amount&#34;: &#34;13000.00&#34;,
+          &#34;container_number&#34;: &#34;CSQU3054510&#34;
+        },
+        {
+          &#34;line_no&#34;: 2,
+          &#34;description&#34;: &#34;Stainless steel scrap (sample)&#34;,
+          &#34;hs_code_jp&#34;: null,
+          &#34;hs_code_dest&#34;: null,
+          &#34;origin_country&#34;: &#34;JP&#34;,
+          &#34;quantity&#34;: &#34;11500.000&#34;,
+          &#34;quantity_unit&#34;: &#34;KGM&#34;,
+          &#34;net_weight_kg&#34;: &#34;11500.000&#34;,
+          &#34;gross_weight_kg&#34;: &#34;11720.000&#34;,
+          &#34;packages&#34;: 12,
+          &#34;package_type&#34;: &#34;BX&#34;,
+          &#34;unit_price&#34;: &#34;0.98&#34;,
+          &#34;amount&#34;: &#34;11270.00&#34;,
+          &#34;container_number&#34;: &#34;CSQU3054510&#34;
+        }
+      ],
+      &#34;totals&#34;: {
+        &#34;amount&#34;: &#34;24270.00&#34;,
+        &#34;net_weight_kg&#34;: &#34;21500.000&#34;,
+        &#34;gross_weight_kg&#34;: &#34;21840.000&#34;,
+        &#34;packages&#34;: 22
+      },
+      &#34;documents&#34;: [],
+      &#34;events&#34;: [
+        {
+          &#34;type&#34;: &#34;created&#34;,
+          &#34;at&#34;: &#34;2026-11-30T15:00:00+09:00&#34;,
+          &#34;by&#34;: &#34;human&#34;,
+          &#34;note&#34;: null
+        }
+      ],
+      &#34;ext&#34;: {}
+    },
+    &#34;reply_by&#34;: null,
+    &#34;note&#34;: null
+  }
+}</pre>
+    </details>
+  </article>
+  <article class="entry broker">
+    <div class="meta">16. 2026-12-09 11:02 ｜ 相手側（フォワーダー兼通関業者）（Demo Forwarding &amp; Customs K.K.） → 荷主側（Demo Resource Recovery Co., Ltd.）</div>
+    <div class="what">
+      <strong>見積</strong>
+<code>quote</code><span class="state">状態：完了 <code>TASK_STATE_COMPLETED</code></span>    </div>
+    <div class="carrier">A2A では：タスクの結果（Artifact）として返す ｜ タスク <code>338f5d41</code></div>
+    <ul class="facts">
+      <li>見積番号：Q-0002</li>
+      <li>料金：Ocean freight (sample tariff): 85000.00 JPY<span class="tag rule">規則による計算</span></li>
+      <li>料金：Terminal handling (sample tariff): 32000.00 JPY<span class="tag rule">規則による計算</span></li>
+      <li>料金：Export customs clearance (sample tariff): 11800.00 JPY<span class="tag rule">規則による計算</span></li>
+      <li>料金：Documentation (sample tariff): 5500.00 JPY<span class="tag rule">規則による計算</span></li>
+      <li>合計：134300.00 JPY<span class="tag rule">規則による計算</span></li>
+      <li>見積の有効期限：2026-12-23<span class="tag rule">規則による計算</span></li>
+      <li>メモ：Mock quote calculated from a fixed sample tariff. It is not a real offer.</li>
+    </ul>
+    <details>
+      <summary>封筒の中身（JSON）を見る</summary>
+      <pre>{
+  &#34;profile&#34;: &#34;trade-agent-profile&#34;,
+  &#34;profile_version&#34;: &#34;0.1.0&#34;,
+  &#34;message_type&#34;: &#34;quote&#34;,
+  &#34;message_id&#34;: &#34;40c87cb9-fbe6-5ee7-a376-91588ab062b1&#34;,
+  &#34;correlation_id&#34;: &#34;7884fb85-bb37-5304-94f9-d25ffb491969&#34;,
+  &#34;in_reply_to&#34;: &#34;11a7185f-65bd-5625-9acd-48f8ce8041d4&#34;,
+  &#34;sent_at&#34;: &#34;2026-12-09T11:02:00+09:00&#34;,
+  &#34;sender&#34;: {
+    &#34;role&#34;: &#34;forwarder&#34;,
+    &#34;name&#34;: &#34;Demo Forwarding &amp; Customs K.K.&#34;,
+    &#34;id&#34;: &#34;demo-forwarder-broker&#34;
+  },
+  &#34;payload&#34;: {
+    &#34;shipment_id&#34;: &#34;SHP-2026-0100&#34;,
+    &#34;quote_number&#34;: &#34;Q-0002&#34;,
+    &#34;currency&#34;: &#34;JPY&#34;,
+    &#34;charges&#34;: [
+      {
+        &#34;name&#34;: &#34;Ocean freight (sample tariff)&#34;,
+        &#34;amount&#34;: &#34;85000.00&#34;
+      },
+      {
+        &#34;name&#34;: &#34;Terminal handling (sample tariff)&#34;,
+        &#34;amount&#34;: &#34;32000.00&#34;
+      },
+      {
+        &#34;name&#34;: &#34;Export customs clearance (sample tariff)&#34;,
+        &#34;amount&#34;: &#34;11800.00&#34;
+      },
+      {
+        &#34;name&#34;: &#34;Documentation (sample tariff)&#34;,
+        &#34;amount&#34;: &#34;5500.00&#34;
+      }
+    ],
+    &#34;total&#34;: &#34;134300.00&#34;,
+    &#34;valid_until&#34;: &#34;2026-12-23&#34;,
+    &#34;note&#34;: &#34;Mock quote calculated from a fixed sample tariff. It is not a real offer.&#34;
+  }
+}</pre>
+    </details>
+  </article>
+  <article class="entry shipper">
+    <div class="meta">17. 2026-12-09 11:04 ｜ 荷主側（Demo Resource Recovery Co., Ltd.） → 相手側（フォワーダー兼通関業者）（Demo Forwarding &amp; Customs K.K.）</div>
+    <div class="what">
+      <strong>辞退</strong>
+<code>rejection</code>    </div>
+    <div class="carrier">A2A では：Message の Part 1つ（data に封筒、mediaType は application/json）で送る</div>
+    <ul class="facts">
+      <li>船積みID：SHP-2026-0100</li>
+      <li>理由：The quoted total is above our budget for this shipment.</li>
+    </ul>
+    <details>
+      <summary>封筒の中身（JSON）を見る</summary>
+      <pre>{
+  &#34;profile&#34;: &#34;trade-agent-profile&#34;,
+  &#34;profile_version&#34;: &#34;0.1.0&#34;,
+  &#34;message_type&#34;: &#34;rejection&#34;,
+  &#34;message_id&#34;: &#34;8e7a54d7-b242-56c0-9ea9-e7fcf93301a2&#34;,
+  &#34;correlation_id&#34;: &#34;7884fb85-bb37-5304-94f9-d25ffb491969&#34;,
+  &#34;in_reply_to&#34;: &#34;40c87cb9-fbe6-5ee7-a376-91588ab062b1&#34;,
+  &#34;sent_at&#34;: &#34;2026-12-09T11:04:00+09:00&#34;,
+  &#34;sender&#34;: {
+    &#34;role&#34;: &#34;shipper&#34;,
+    &#34;name&#34;: &#34;Demo Resource Recovery Co., Ltd.&#34;,
+    &#34;id&#34;: &#34;demo-shipper&#34;
+  },
+  &#34;payload&#34;: {
+    &#34;shipment_id&#34;: &#34;SHP-2026-0100&#34;,
+    &#34;reason&#34;: &#34;The quoted total is above our budget for this shipment.&#34;,
+    &#34;note&#34;: null
+  }
+}</pre>
+    </details>
+  </article>
+  <article class="entry broker">
+    <div class="meta">18. 2026-12-09 11:06 ｜ 相手側（フォワーダー兼通関業者）（Demo Forwarding &amp; Customs K.K.） → 荷主側（Demo Resource Recovery Co., Ltd.）</div>
+    <div class="what">
+      <strong>返事の封筒なし</strong>
+<span class="state">状態：完了 <code>TASK_STATE_COMPLETED</code></span>    </div>
+    <div class="carrier">A2A では：タスクの状態だけを返す ｜ タスク <code>e7aa03d3</code></div>
+  </article>
+</section>
+
+<footer>
+  <p>この記録は scripts/demo.py が作りました。何度実行しても同じ内容になります。</p>
+  <p>これは実験的な参照仕様です。いずれの標準化団体の公式仕様でもありません。</p>
+  <p>判断するのは利用者です。このツールは下調べと記録を担います。</p>
+</footer>
+</main>
+</body>
+</html>

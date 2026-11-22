@@ -1,0 +1,97 @@
+{
+  "contract_version": "0.1.0",
+  "shipment_id": "SHP-2026-0007",
+  "direction": "export",
+  "status": "draft",
+  "parties": {
+    "shipper": {
+      "name": "Sample Metal Recycling K.K.",
+      "address": "1-1 Sample, Yokohama",
+      "country": "JP"
+    },
+    "exporter": {
+      "name": "Sample Metal Recycling K.K.",
+      "address": "1-1 Sample, Yokohama",
+      "country": "JP"
+    },
+    "consignee": {
+      "name": "Demo Metal Industry (Tianjin) Co., Ltd.",
+      "address": "5 Demo Ave, Tianjin",
+      "country": "CN"
+    }
+  },
+  "trade_terms": {
+    "incoterms": "EXW",
+    "incoterms_version": "2020",
+    "place": "JPTYO",
+    "currency": "CNY",
+    "payment_terms": null
+  },
+  "transport": {
+    "mode": "air",
+    "port_of_loading": "JPNRT",
+    "port_of_discharge": "CNSHA",
+    "etd": null,
+    "eta": null,
+    "containers": []
+  },
+  "lines": [
+    {
+      "line_no": 1,
+      "description": "Tin scrap (sample)",
+      "hs_code_jp": null,
+      "hs_code_dest": null,
+      "origin_country": "JP",
+      "quantity": "300.000",
+      "quantity_unit": "KGM",
+      "net_weight_kg": "300.000",
+      "gross_weight_kg": "318.000",
+      "packages": 6,
+      "package_type": "BX",
+      "unit_price": "152.00",
+      "amount": "45600.00",
+      "container_number": null
+    },
+    {
+      "line_no": 2,
+      "description": "Nickel alloy scrap (sample)",
+      "hs_code_jp": null,
+      "hs_code_dest": null,
+      "origin_country": "JP",
+      "quantity": "250.000",
+      "quantity_unit": "KGM",
+      "net_weight_kg": "250.000",
+      "gross_weight_kg": "266.000",
+      "packages": 5,
+      "package_type": "BX",
+      "unit_price": "91.00",
+      "amount": "22750.00",
+      "container_number": null
+    }
+  ],
+  "totals": {
+    "amount": "68350.00",
+    "net_weight_kg": "550.000",
+    "gross_weight_kg": "584.000",
+    "packages": 11
+  },
+  "documents": [
+    {
+      "doc_type": "packing_list",
+      "doc_number": "PL-0007",
+      "issue_date": null,
+      "file": null,
+      "sha256": null,
+      "fields": {}
+    }
+  ],
+  "events": [
+    {
+      "type": "created",
+      "at": "2026-12-09T15:00:00+09:00",
+      "by": "human",
+      "note": null
+    }
+  ],
+  "ext": {}
+}

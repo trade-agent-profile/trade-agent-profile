@@ -1,0 +1,53 @@
+{
+  "id": "C14",
+  "title": {
+    "ja": "受け付けていない種類のメッセージは、処理せずに断る",
+    "en": "A message type the receiver does not accept is refused"
+  },
+  "needs": [],
+  "refuses": [
+    "quote"
+  ],
+  "extension_required": false,
+  "steps": [
+    {
+      "send": {
+        "profile": "trade-agent-profile",
+        "profile_version": "0.1.0",
+        "message_type": "quote",
+        "message_id": "$id:m1",
+        "correlation_id": "$id:thread",
+        "in_reply_to": "$id:other",
+        "sent_at": "$now",
+        "sender": {
+          "role": "forwarder",
+          "name": "Demo Resource Recovery Co., Ltd.",
+          "id": "conformance-client"
+        },
+        "payload": {
+          "shipment_id": "SHP-2026-0100",
+          "quote_number": "Q-CONFORMANCE",
+          "currency": "JPY",
+          "charges": [
+            {
+              "name": "Freight (sample)",
+              "amount": "1000.00"
+            }
+          ],
+          "total": "1000.00",
+          "valid_until": "2026-12-31",
+          "note": null
+        }
+      },
+      "expect": {
+        "state": "TASK_STATE_REJECTED",
+        "reply": {
+          "in": "status",
+          "message_type": "error",
+          "code": "UNEXPECTED_MESSAGE",
+          "issues": []
+        }
+      }
+    }
+  ]
+}

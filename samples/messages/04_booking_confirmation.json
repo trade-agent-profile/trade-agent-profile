@@ -1,0 +1,22 @@
+{
+  "profile": "trade-agent-profile",
+  "profile_version": "0.1.0",
+  "message_type": "booking_confirmation",
+  "message_id": "d1223f96-53f9-5f8a-88bc-a1a9c86230b9",
+  "correlation_id": "00363643-2efa-53f9-b2fd-a1d715f6fa0d",
+  "in_reply_to": "9dce358c-0ace-589b-8665-3857305b67a4",
+  "sent_at": "2026-12-01T14:02:00+09:00",
+  "sender": {
+    "role": "forwarder",
+    "name": "Demo Forwarding & Customs K.K.",
+    "id": "demo-forwarder-broker"
+  },
+  "payload": {
+    "shipment_id": "SHP-2026-0100",
+    "booking_number": "BK-0001",
+    "etd": "2026-12-11",
+    "eta": "2026-12-16",
+    "cargo_cutoff_at": "2026-12-09T16:00:00+09:00",
+    "note": null
+  }
+}

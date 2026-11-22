@@ -1,0 +1,19 @@
+{
+  "profile": "trade-agent-profile",
+  "profile_version": "0.1.0",
+  "message_type": "rejection",
+  "message_id": "8e7a54d7-b242-56c0-9ea9-e7fcf93301a2",
+  "correlation_id": "7884fb85-bb37-5304-94f9-d25ffb491969",
+  "in_reply_to": "40c87cb9-fbe6-5ee7-a376-91588ab062b1",
+  "sent_at": "2026-12-09T11:04:00+09:00",
+  "sender": {
+    "role": "shipper",
+    "name": "Demo Resource Recovery Co., Ltd.",
+    "id": "demo-shipper"
+  },
+  "payload": {
+    "shipment_id": "SHP-2026-0100",
+    "reason": "The quoted total is above our budget for this shipment.",
+    "note": null
+  }
+}

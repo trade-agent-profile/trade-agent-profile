@@ -1,0 +1,18 @@
+{
+  "profile": "trade-agent-profile",
+  "profile_version": "0.1.0",
+  "message_type": "approval",
+  "message_id": "6a20d50c-770c-5530-9596-3c740594eb86",
+  "correlation_id": "00363643-2efa-53f9-b2fd-a1d715f6fa0d",
+  "in_reply_to": "de2dbf9d-8f4d-5d4a-93c7-f9e8f6233884",
+  "sent_at": "2026-12-08T15:00:00+09:00",
+  "sender": {
+    "role": "shipper",
+    "name": "Demo Resource Recovery Co., Ltd.",
+    "id": "demo-shipper"
+  },
+  "payload": {
+    "shipment_id": "SHP-2026-0100",
+    "note": null
+  }
+}

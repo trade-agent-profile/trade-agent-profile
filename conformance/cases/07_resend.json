@@ -1,0 +1,154 @@
+{
+  "id": "C07",
+  "title": {
+    "ja": "同じ message_id の再送には、処理をやり直さず、最初と同じ封筒を返す",
+    "en": "A resend with the same message_id is not processed again and gets the first reply"
+  },
+  "needs": [
+    "quote_request"
+  ],
+  "refuses": [],
+  "extension_required": false,
+  "steps": [
+    {
+      "send": {
+        "profile": "trade-agent-profile",
+        "profile_version": "0.1.0",
+        "message_type": "quote_request",
+        "message_id": "$id:m1",
+        "correlation_id": "$id:thread",
+        "sent_at": "$now",
+        "sender": {
+          "role": "shipper",
+          "name": "Demo Resource Recovery Co., Ltd.",
+          "id": "conformance-client"
+        },
+        "payload": {
+          "shipment": {
+            "contract_version": "0.1.0",
+            "shipment_id": "SHP-2026-0100",
+            "direction": "export",
+            "status": "draft",
+            "parties": {
+              "shipper": {
+                "name": "Demo Resource Recovery Co., Ltd.",
+                "address": "3-3 Demo, Osaka",
+                "country": "JP"
+              },
+              "exporter": {
+                "name": "Demo Resource Recovery Co., Ltd.",
+                "address": "3-3 Demo, Osaka",
+                "country": "JP"
+              },
+              "consignee": {
+                "name": "Sample Trading (Shanghai) Co., Ltd.",
+                "address": "1 Sample Rd, Shanghai",
+                "country": "CN"
+              }
+            },
+            "trade_terms": {
+              "incoterms": "CIF",
+              "incoterms_version": "2020",
+              "place": "CNXMN",
+              "currency": "USD",
+              "payment_terms": "T/T in advance"
+            },
+            "transport": {
+              "mode": "sea",
+              "port_of_loading": "JPUKB",
+              "port_of_discharge": "CNXMN",
+              "etd": "2026-12-11",
+              "eta": "2026-12-16",
+              "containers": [
+                {
+                  "number": "CSQU3054510",
+                  "iso_type": "22G1",
+                  "seals": [
+                    "SL000014"
+                  ],
+                  "gross_weight_kg": "21840.000"
+                }
+              ]
+            },
+            "lines": [
+              {
+                "line_no": 1,
+                "description": "Aluminium scrap (sample)",
+                "hs_code_jp": null,
+                "hs_code_dest": null,
+                "origin_country": "JP",
+                "quantity": "10000.000",
+                "quantity_unit": "KGM",
+                "net_weight_kg": "10000.000",
+                "gross_weight_kg": "10120.000",
+                "packages": 10,
+                "package_type": "BG",
+                "unit_price": "1.30",
+                "amount": "13000.00",
+                "container_number": "CSQU3054510"
+              },
+              {
+                "line_no": 2,
+                "description": "Stainless steel scrap (sample)",
+                "hs_code_jp": null,
+                "hs_code_dest": null,
+                "origin_country": "JP",
+                "quantity": "11500.000",
+                "quantity_unit": "KGM",
+                "net_weight_kg": "11500.000",
+                "gross_weight_kg": "11720.000",
+                "packages": 12,
+                "package_type": "BX",
+                "unit_price": "0.98",
+                "amount": "11270.00",
+                "container_number": "CSQU3054510"
+              }
+            ],
+            "totals": {
+              "amount": "24270.00",
+              "net_weight_kg": "21500.000",
+              "gross_weight_kg": "21840.000",
+              "packages": 22
+            },
+            "documents": [],
+            "events": [
+              {
+                "type": "created",
+                "at": "2026-11-30T15:00:00+09:00",
+                "by": "human",
+                "note": null
+              }
+            ],
+            "ext": {}
+          },
+          "reply_by": null,
+          "note": null
+        }
+      },
+      "expect": {
+        "state": "TASK_STATE_COMPLETED",
+        "reply": {
+          "in": "artifact",
+          "message_type": "quote",
+          "payload": {
+            "shipment_id": "SHP-2026-0100"
+          }
+        }
+      }
+    },
+    {
+      "resend": 1,
+      "expect": {
+        "state": "TASK_STATE_COMPLETED",
+        "reply": {
+          "in": "artifact",
+          "message_type": "quote",
+          "payload": {
+            "shipment_id": "SHP-2026-0100"
+          }
+        },
+        "same_reply_as": 1
+      }
+    }
+  ]
+}

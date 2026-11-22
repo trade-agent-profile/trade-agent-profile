@@ -1,0 +1,653 @@
+{
+  "ui": {
+    "notice": "これは実験的な参照仕様です。いずれの標準化団体の公式仕様でもありません。",
+    "judge": "判断するのは利用者です。このツールは下調べと記録を担います。",
+    "code_note": "国・通貨・港などのコードは形式だけを調べています。実在するコードかどうかは調べていません。",
+    "ok": "合格",
+    "ng": "不合格",
+    "why": "なぜ",
+    "fix": "直し方",
+    "whole": "ファイル全体",
+    "summary": "{total}件を調べました。合格 {ok}件、不合格 {ng}件。",
+    "expected_ok": "期待どおり",
+    "expected_ng": "期待と違う",
+    "expected_summary": "{total}件を期待結果と比べました。期待どおり {ok}件、期待と違う {ng}件。",
+    "expected_missing_file": "対になる期待結果のファイル（.expected.json）がありません。",
+    "expected_lacking": "出るはずなのに出なかったエラー",
+    "expected_extra": "出ないはずなのに出たエラー",
+    "no_files": "調べる JSON ファイルが見つかりません: {arg}"
+  },
+  "types": {
+    "string": "文字列",
+    "integer": "整数",
+    "number": "数値",
+    "boolean": "真偽値",
+    "object": "オブジェクト",
+    "array": "配列",
+    "null": "null"
+  },
+  "phrases": {
+    "or": " または ",
+    "list_sep": "、",
+    "exactly": "ちょうど {n} 個",
+    "at_least": "{n} 個以上",
+    "at_most": "{n} 個以下",
+    "range_both": "{min} 以上 {max} 以下",
+    "range_min": "{min} 以上",
+    "range_max": "{max} 以下",
+    "json_at": "{line} 行 {column} 文字目の付近",
+    "json_unknown": "場所は特定できません"
+  },
+  "hints": {
+    "decimal_string": "金額・数量・重量・単価は、数値ではなく引用符つきの文字列で書きます（例 \"22500.00\"）。",
+    "integer": "個数や番号は、引用符なしの整数で書きます（例 18）。"
+  },
+  "reasons": {
+    "syntax": "書き方が道筋の形になっていません",
+    "not_allowed": "書類の値と比べられるのは、当事者・取引条件・輸送・明細・合計などの正本の項目だけです",
+    "not_found": "その場所に項目がありません",
+    "not_scalar": "まとまり全体ではなく、1つの値を指してください"
+  },
+  "errors": {
+    "FILE_UNREADABLE": {
+      "why": "ファイルを読めません（{detail}）。",
+      "fix": "ファイルの場所と名前を確かめてください。"
+    },
+    "ENCODING_INVALID": {
+      "why": "文字コードが UTF-8 ではありません。",
+      "fix": "ファイルを UTF-8 で保存し直してください。"
+    },
+    "JSON_INVALID": {
+      "why": "JSON として読めません（{where}）。",
+      "fix": "かっこ・引用符・カンマの過不足を直してください。"
+    },
+    "ROOT_NOT_OBJECT": {
+      "why": "いちばん外側がオブジェクト（波かっこで囲んだ形）ではありません。",
+      "fix": "1件の船積みを、1つのオブジェクトとして書いてください。"
+    },
+    "VERSION_UNSUPPORTED": {
+      "why": "版「{value}」は、この検証では扱えません（扱える版: {supported}）。",
+      "fix": "contract_version を扱える版に合わせるか、その版に対応した検証を使ってください。"
+    },
+    "REQUIRED_MISSING": {
+      "why": "必須の項目「{key}」がありません。",
+      "fix": "項目を追加してください。項目そのものは省けません。値が分からないときは、null にできる項目に限り null と書きます。"
+    },
+    "REQUIRED_NULL": {
+      "why": "この項目は必須で、null にできません。",
+      "fix": "値を入れてください。"
+    },
+    "TYPE_MISMATCH": {
+      "why": "型が違います（いまは {actual}、正しくは {expected}）。",
+      "fix": "{expected} で書いてください。{hint}"
+    },
+    "ENUM_INVALID": {
+      "why": "「{value}」は使えない値です。",
+      "fix": "次のどれかにしてください: {allowed}"
+    },
+    "UNKNOWN_FIELD": {
+      "why": "「{key}」は、この版にない項目です。",
+      "fix": "綴りを確かめてください。独自の項目なら ext.<プロジェクト名> の下に移してください。"
+    },
+    "EXT_INVALID": {
+      "why": "ext の直下には「プロジェクト名: オブジェクト」の形しか置けません（問題の箇所: {key}）。",
+      "fix": "独自の項目は ext.<プロジェクト名> の下に、オブジェクトとして置いてください。プロジェクト名は英小文字で始め、英小文字・数字・ハイフン・下線だけを使います。"
+    },
+    "ARRAY_LENGTH": {
+      "why": "要素の数が合いません（いまは {actual} 個、必要なのは {expected}）。",
+      "fix": "要素の数を直してください。"
+    },
+    "EMPTY_VALUE": {
+      "why": "空の文字列になっています。",
+      "fix": "値を入れてください。分からないときは、null にできる項目に限り null と書きます。"
+    },
+    "OUT_OF_RANGE": {
+      "why": "値 {value} が範囲の外です（使えるのは {range}）。",
+      "fix": "範囲に収まる値にしてください。"
+    },
+    "SCHEMA_VIOLATION": {
+      "why": "スキーマの決まりに合いません（{detail}）。",
+      "fix": "schema/shipment.schema.json の該当する箇所を確かめてください。"
+    },
+    "CONTAINER_CHECK_DIGIT": {
+      "why": "コンテナ番号「{value}」の検査数字が合いません（計算すると {expected}、書かれているのは {actual}）。",
+      "fix": "書類でコンテナ番号を確かめ直してください。写し間違いの可能性があります。"
+    },
+    "CONTAINER_DUPLICATE": {
+      "why": "コンテナ番号「{value}」が2回以上出てきます。",
+      "fix": "同じコンテナは1回だけ書いてください。"
+    },
+    "LINE_CONTAINER_UNKNOWN": {
+      "why": "コンテナ番号「{value}」が transport.containers にありません。",
+      "fix": "transport.containers にある番号を書くか、コンテナを追加してください。コンテナに入れない貨物は null にします。"
+    },
+    "LINE_NO_DUPLICATE": {
+      "why": "明細番号 {value} が重なっています。",
+      "fix": "明細番号は重ならないように振ってください。"
+    },
+    "TOTAL_MISMATCH": {
+      "why": "合計が合いません（明細を足すと {expected}、書かれているのは {actual}）。",
+      "fix": "明細と合計のどちらが正しいかを確かめて直してください。"
+    },
+    "DATE_ORDER": {
+      "why": "到着予定日（{eta}）が、出発予定日（{etd}）より前になっています。",
+      "fix": "transport.etd と transport.eta を確かめてください。"
+    },
+    "EXPORTER_REQUIRED": {
+      "why": "輸出（direction が export）なのに、輸出者が null です。",
+      "fix": "日本の申告上の輸出者を parties.exporter に書いてください。"
+    },
+    "FIELD_PATH_INVALID": {
+      "why": "fields のキー「{key}」が、正本の項目を指していません（{reason}）。",
+      "fix": "最上位の値への道筋で書いてください（例 totals.amount、lines[0].amount）。"
+    },
+    "CONFIDENCE_REQUIRED": {
+      "why": "読み取った方法が ai なのに、確からしさが null です。",
+      "fix": "confidence に 0〜1 の数値を入れてください。"
+    },
+    "BBOX_INVALID": {
+      "why": "位置 {value} の並びが正しくありません。",
+      "fix": "[x0, top, x1, bottom] の順で、x0 ≦ x1、top ≦ bottom、すべて 0 以上にしてください。"
+    },
+    "DISCREPANCY_NOT_RECORDED": {
+      "why": "書類の値「{doc_value}」が、正本の {field}「{auth_value}」と違いますが、食い違いを確認した記録がありません。",
+      "fix": "どちらが正しいかを確かめ、events に type が \"discrepancy_noted\" の記録を追加してください（note に内容を書きます）。"
+    },
+    "PROFILE_UNKNOWN": {
+      "why": "プロファイル「{value}」は、この検証では扱えません（扱えるのは {expected}）。",
+      "fix": "profile を {expected} にしてください。"
+    },
+    "PROFILE_VERSION_UNSUPPORTED": {
+      "why": "プロファイルの版「{value}」は、この検証では扱えません（扱える版: {supported}）。",
+      "fix": "profile_version を扱える版に合わせるか、その版に対応した相手に送ってください。"
+    },
+    "IN_REPLY_TO_REQUIRED": {
+      "why": "{message_type} は返事のメッセージなのに、どのメッセージへの返事かが書かれていません。",
+      "fix": "in_reply_to に、返事をする相手のメッセージの message_id を書いてください。"
+    }
+  },
+  "kinds": {
+    "generic": {
+      "why": "「{value}」は形式が違います。",
+      "fix": "スキーマで決められた形式に直してください。"
+    },
+    "version": {
+      "why": "「{value}」は版番号の形式ではありません。",
+      "fix": "3つの数字を点で区切って書いてください（例 0.1.0）。"
+    },
+    "shipment_id": {
+      "why": "「{value}」は船積みIDの形式ではありません。",
+      "fix": "「SHP-西暦4桁-連番4桁以上」で書いてください（例 SHP-2026-0001）。"
+    },
+    "date": {
+      "why": "「{value}」は日付の形式ではありません。",
+      "fix": "YYYY-MM-DD で書いてください（例 2026-12-10）。"
+    },
+    "date_calendar": {
+      "why": "「{value}」は実在しない日付です。",
+      "fix": "暦にある日付に直してください（例 2026-12-10）。"
+    },
+    "datetime": {
+      "why": "「{value}」は日時の形式ではありません。",
+      "fix": "タイムゾーンつきの ISO 8601 で書いてください（例 2026-12-01T09:00:00+09:00）。"
+    },
+    "datetime_calendar": {
+      "why": "「{value}」は実在しない日時です。",
+      "fix": "暦と時計にある日時に直してください（例 2026-12-01T09:00:00+09:00）。"
+    },
+    "country": {
+      "why": "「{value}」は国コードの形式ではありません。",
+      "fix": "ISO 3166-1 の英大文字2文字で書いてください（例 JP）。"
+    },
+    "currency": {
+      "why": "「{value}」は通貨コードの形式ではありません。",
+      "fix": "ISO 4217 の英大文字3文字で書いてください（例 USD）。"
+    },
+    "locode": {
+      "why": "「{value}」は UN/LOCODE の形式ではありません。",
+      "fix": "国2文字＋地点3文字の5文字で書いてください（例 JPYOK）。"
+    },
+    "unit": {
+      "why": "「{value}」は数量の単位コードの形式ではありません。",
+      "fix": "UN/ECE 勧告20のコードを、英大文字・数字の2〜3文字で書いてください（例 KGM）。"
+    },
+    "package_type": {
+      "why": "「{value}」は包装コードの形式ではありません。",
+      "fix": "UN/ECE 勧告21のコードを、英大文字・数字の2文字で書いてください（例 BG）。"
+    },
+    "iso_type": {
+      "why": "「{value}」はコンテナの寸法・型式コードの形式ではありません。",
+      "fix": "ISO 6346 のコードを4文字で書いてください（例 22G1）。"
+    },
+    "container_number": {
+      "why": "「{value}」はコンテナ番号の形式ではありません。",
+      "fix": "英大文字4文字（4文字目は U・J・Z のどれか）＋数字7桁で書いてください（例 CSQU3054383）。"
+    },
+    "incoterms": {
+      "why": "「{value}」は取引条件（インコタームズ）の形式ではありません。",
+      "fix": "英大文字3文字で書いてください（例 FOB）。"
+    },
+    "incoterms_version": {
+      "why": "「{value}」はインコタームズの版の形式ではありません。",
+      "fix": "西暦4桁を、引用符つきの文字列で書いてください（例 \"2020\"）。"
+    },
+    "amount": {
+      "why": "「{value}」は金額の形式ではありません。",
+      "fix": "小数2桁の10進数を、引用符つきの文字列で書いてください（例 \"22500.00\"）。円のように小数のない通貨も .00 を付けます。"
+    },
+    "quantity": {
+      "why": "「{value}」は数量の形式ではありません。",
+      "fix": "小数3桁までの10進数を、引用符つきの文字列で書いてください（例 \"18000.000\"）。"
+    },
+    "weight": {
+      "why": "「{value}」は重量の形式ではありません。",
+      "fix": "kg 単位で、小数3桁までの10進数を、引用符つきの文字列で書いてください（例 \"18250.000\"）。"
+    },
+    "unit_price": {
+      "why": "「{value}」は単価の形式ではありません。",
+      "fix": "小数6桁までの10進数を、引用符つきの文字列で書いてください（例 \"1.25\"）。"
+    },
+    "hs_code_jp": {
+      "why": "「{value}」は日本側の品目番号の形式ではありません。",
+      "fix": "数字9桁（輸出統計品目番号）で書いてください。出典で確かめるまでは null にします。"
+    },
+    "hs_code_dest": {
+      "why": "「{value}」は相手国側の品目番号の形式ではありません。",
+      "fix": "数字だけの6〜13桁で書いてください。出典で確かめるまでは null にします。"
+    },
+    "sha256": {
+      "why": "「{value}」は SHA-256 の形式ではありません。",
+      "fix": "英小文字と数字の64文字で書いてください。分からないときは null にします。"
+    },
+    "event_type": {
+      "why": "「{value}」は出来事の種類の形式ではありません。",
+      "fix": "英小文字で始め、英小文字・数字・下線だけで書いてください（例 created）。"
+    },
+    "uuid": {
+      "why": "「{value}」は UUID の形式ではありません。",
+      "fix": "英小文字と数字を 8-4-4-4-12 桁に区切った形で書いてください（例 5b0c0c5e-0c1e-4f6a-9d2b-3a1f0e7c9d10）。"
+    }
+  },
+  "fields": {
+    "contract_version": "契約の版",
+    "shipment_id": "船積みID",
+    "direction": "輸出入の別",
+    "status": "状態",
+    "parties": "当事者",
+    "parties.shipper": "荷送人",
+    "parties.shipper.name": "荷送人の名称",
+    "parties.shipper.address": "荷送人の住所",
+    "parties.shipper.country": "荷送人の国",
+    "parties.exporter": "輸出者",
+    "parties.exporter.name": "輸出者の名称",
+    "parties.exporter.address": "輸出者の住所",
+    "parties.exporter.country": "輸出者の国",
+    "parties.consignee": "荷受人",
+    "parties.consignee.name": "荷受人の名称",
+    "parties.consignee.address": "荷受人の住所",
+    "parties.consignee.country": "荷受人の国",
+    "trade_terms": "取引条件",
+    "trade_terms.incoterms": "インコタームズ",
+    "trade_terms.incoterms_version": "インコタームズの版",
+    "trade_terms.place": "指定地",
+    "trade_terms.currency": "通貨",
+    "trade_terms.payment_terms": "支払条件",
+    "transport": "輸送",
+    "transport.mode": "輸送形態",
+    "transport.port_of_loading": "積み地",
+    "transport.port_of_discharge": "揚げ地",
+    "transport.etd": "出発予定日",
+    "transport.eta": "到着予定日",
+    "transport.containers": "コンテナの一覧",
+    "transport.containers[]": "コンテナ",
+    "transport.containers[].number": "コンテナ番号",
+    "transport.containers[].iso_type": "コンテナの寸法・型式コード",
+    "transport.containers[].seals": "封印番号の一覧",
+    "transport.containers[].seals[]": "封印番号",
+    "transport.containers[].gross_weight_kg": "コンテナ内の総重量",
+    "lines": "明細の一覧",
+    "lines[]": "明細",
+    "lines[].line_no": "明細番号",
+    "lines[].description": "品名",
+    "lines[].hs_code_jp": "日本側の品目番号",
+    "lines[].hs_code_dest": "相手国側の品目番号",
+    "lines[].origin_country": "原産国",
+    "lines[].quantity": "数量",
+    "lines[].quantity_unit": "数量の単位",
+    "lines[].net_weight_kg": "正味重量",
+    "lines[].gross_weight_kg": "総重量",
+    "lines[].packages": "個数",
+    "lines[].package_type": "包装の種類",
+    "lines[].unit_price": "単価",
+    "lines[].amount": "金額",
+    "lines[].container_number": "明細のコンテナ番号",
+    "totals": "合計",
+    "totals.amount": "合計金額",
+    "totals.net_weight_kg": "合計の正味重量",
+    "totals.gross_weight_kg": "合計の総重量",
+    "totals.packages": "合計の個数",
+    "documents": "書類の一覧",
+    "documents[]": "書類",
+    "documents[].doc_type": "書類の種類",
+    "documents[].doc_number": "書類番号",
+    "documents[].issue_date": "発行日",
+    "documents[].file": "ファイルの場所",
+    "documents[].sha256": "ファイルの指紋（SHA-256）",
+    "documents[].fields": "書類から読み取った値の一覧",
+    "documents[].fields.*": "書類から読み取った値",
+    "documents[].fields.*.value": "書類に書いてあった値",
+    "documents[].fields.*.page": "ページ番号",
+    "documents[].fields.*.bbox": "書類の上の位置",
+    "documents[].fields.*.bbox[]": "位置の座標",
+    "documents[].fields.*.extracted_by": "読み取った方法",
+    "documents[].fields.*.confidence": "確からしさ",
+    "events": "出来事の一覧",
+    "events[]": "出来事",
+    "events[].type": "出来事の種類",
+    "events[].at": "日時",
+    "events[].by": "行った主体",
+    "events[].note": "メモ",
+    "ext": "独自の項目",
+    "ext.*": "プロジェクト別の独自の項目"
+  },
+  "message_fields": {
+    "profile": "プロファイルの名前",
+    "profile_version": "プロファイルの版",
+    "message_type": "メッセージの種類",
+    "message_id": "メッセージの識別子",
+    "correlation_id": "会話の識別子",
+    "in_reply_to": "返事をする相手のメッセージ",
+    "sent_at": "送った日時",
+    "sender": "送り手",
+    "sender.role": "送り手の立場",
+    "sender.name": "送り手の名称",
+    "sender.id": "送り手の識別子",
+    "payload": "メッセージの中身",
+    "payload.shipment": "船積みのデータ",
+    "payload.reply_by": "回答の期限",
+    "payload.note": "メモ",
+    "payload.shipment_id": "船積みID",
+    "payload.quote_number": "見積番号",
+    "payload.currency": "通貨",
+    "payload.charges": "料金の一覧",
+    "payload.charges[]": "料金",
+    "payload.charges[].name": "料金の名前",
+    "payload.charges[].amount": "料金の金額",
+    "payload.total": "見積の合計",
+    "payload.valid_until": "見積の有効期限",
+    "payload.booking_number": "ブッキング番号",
+    "payload.etd": "出発予定日",
+    "payload.eta": "到着予定日",
+    "payload.cargo_cutoff_at": "貨物の搬入期限",
+    "payload.discrepancies": "食い違いの一覧",
+    "payload.discrepancies[]": "食い違い",
+    "payload.discrepancies[].doc_type": "書類の種類",
+    "payload.discrepancies[].doc_number": "書類番号",
+    "payload.discrepancies[].path": "食い違った項目",
+    "payload.discrepancies[].document_value": "書類に書いてあった値",
+    "payload.discrepancies[].authoritative_value": "正本の値",
+    "payload.draft_number": "下書きの番号",
+    "payload.mock": "模擬であることの印",
+    "payload.exporter": "輸出者",
+    "payload.exporter.name": "輸出者の名称",
+    "payload.exporter.address": "輸出者の住所",
+    "payload.exporter.country": "輸出者の国",
+    "payload.consignee": "荷受人",
+    "payload.consignee.name": "荷受人の名称",
+    "payload.consignee.address": "荷受人の住所",
+    "payload.consignee.country": "荷受人の国",
+    "payload.port_of_loading": "積み地",
+    "payload.port_of_discharge": "揚げ地",
+    "payload.incoterms": "インコタームズ",
+    "payload.invoice_amount": "仕入書の金額",
+    "payload.lines": "明細の一覧",
+    "payload.lines[]": "明細",
+    "payload.lines[].line_no": "明細番号",
+    "payload.lines[].description": "品名",
+    "payload.lines[].hs_code_jp": "日本側の品目番号",
+    "payload.lines[].quantity": "数量",
+    "payload.lines[].quantity_unit": "数量の単位",
+    "payload.lines[].net_weight_kg": "正味重量",
+    "payload.lines[].amount": "金額",
+    "payload.unverified": "未確認の項目の一覧",
+    "payload.unverified[]": "未確認の項目",
+    "payload.reason": "断る理由",
+    "payload.code": "エラーの種類",
+    "payload.text": "エラーの説明",
+    "payload.text.ja": "エラーの説明（日本語）",
+    "payload.text.en": "エラーの説明（英語）",
+    "payload.issues": "問題の箇所の一覧",
+    "payload.issues[]": "問題の箇所",
+    "payload.issues[].code": "問題のコード",
+    "payload.issues[].path": "問題の場所"
+  },
+  "message_errors": {
+    "PROFILE_UNKNOWN": "このプロファイルのメッセージではないため、処理しませんでした。",
+    "PROFILE_VERSION_UNSUPPORTED": "プロファイルの版が合わないため、処理しませんでした。扱える版は 0.1.0 です。",
+    "VALIDATION_FAILED": "メッセージの内容に不足か誤りがあります。issues の箇所を直して、新しい message_id で送り直してください。",
+    "MESSAGE_ID_REUSED": "同じ message_id で、中身の違うメッセージが届きました。処理しませんでした。新しいメッセージには新しい message_id を振ってください。",
+    "UNEXPECTED_MESSAGE": "この相手は、この種類のメッセージを受け付けていません。",
+    "INTERNAL_ERROR": "受け手の側で想定外の失敗が起きました。時間をおいて送り直してください。"
+  },
+  "report": {
+    "title": "台本デモの記録：見積依頼から承認まで",
+    "intro": "荷主側と相手側（フォワーダー兼通関業者）の2つが、決まった形のメッセージをやり取りした記録です。AI は使わず、決まった台本と規則だけで動いています。データはすべて架空です。",
+    "transport_note": "この記録では通信をしていません。1つのプログラムの中でメッセージを受け渡し、A2A に載せたときの対応を各行に示しています。",
+    "legend_title": "値の出どころの表示",
+    "legend_rule": "決まった規則で計算した値、または正本からそのまま写した値です。",
+    "legend_unverified": "出典で確かめていない値です。使う前に、人が確かめる必要があります。",
+    "legend_absent": "この記録には「公式データ」（公的な出典から取った値）と「AIの推測」は出てきません。公的な出典を引いておらず、AI も使っていないためです。",
+    "basis": {
+      "rule": "規則による計算",
+      "unverified": "未確認"
+    },
+    "parties_title": "登場する2つの側",
+    "party": {
+      "shipper": "荷主側",
+      "broker": "相手側（フォワーダー兼通関業者）"
+    },
+    "main_title": "本編：見積依頼から承認まで",
+    "extra_title": "補足：再送・版の不一致・辞退",
+    "scenes": {
+      "quote": {
+        "title": "1. 見積",
+        "text": "荷主側が、予定している船積みの内容を送って見積を頼みます。相手側は、架空の料金表から見積を計算して返します。"
+      },
+      "booking": {
+        "title": "2. ブッキング",
+        "text": "荷主側が見積を受け入れて、ブッキングを頼みます。相手側はブッキング番号と日程を返します。"
+      },
+      "documents": {
+        "title": "3. 書類の提出と、食い違いの通知",
+        "text": "荷主側が、書類から読み取った値をつけて船積みのデータを出します。パッキングリストの総重量が正本と違っていたので、相手側は食い違いを知らせ、直して送り直すよう求めます。"
+      },
+      "resubmission": {
+        "title": "4. 書類の再提出と、申告の下書き",
+        "text": "荷主側が、直した書類で、同じタスクの続きとして出し直します。食い違いがなくなったので、相手側は申告の下書き（模擬）を返します。"
+      },
+      "approval": {
+        "title": "5. 承認",
+        "text": "荷主側が、申告の下書きの内容を確かめて承認します。判断するのは人で、ここではその結果をメッセージで伝えています。"
+      },
+      "resend": {
+        "title": "補足1. 同じメッセージの再送",
+        "text": "荷主側が、2のブッキング依頼をそのままもう一度送ります。相手側は処理をやり直さず、最初の結果をそのまま返します。ブッキングが二重に取られることはありません。"
+      },
+      "version": {
+        "title": "補足2. 版が合わないとき",
+        "text": "荷主側が、相手側の扱えない版（0.2.0）でメッセージを送ります。相手側は処理をせず、扱える版を知らせて断ります。"
+      },
+      "decline": {
+        "title": "補足3. 見積を断る",
+        "text": "別の会話で、荷主側が見積を受け取ったあと、それを断ります。相手側は断られたことを控えて終わります。"
+      }
+    },
+    "types": {
+      "quote_request": "見積依頼",
+      "quote": "見積",
+      "booking_request": "ブッキング依頼",
+      "booking_confirmation": "ブッキング確認",
+      "document_submission": "書類の提出",
+      "discrepancy_notice": "食い違いの通知",
+      "declaration_draft": "申告の下書き（模擬）",
+      "approval": "承認",
+      "rejection": "辞退",
+      "error": "エラー"
+    },
+    "state_only": "返事の封筒なし",
+    "states": {
+      "TASK_STATE_COMPLETED": "完了",
+      "TASK_STATE_INPUT_REQUIRED": "入力待ち（直して送り直す）",
+      "TASK_STATE_REJECTED": "断った",
+      "TASK_STATE_FAILED": "失敗"
+    },
+    "carrier": {
+      "message": "A2A では：Message の Part 1つ（data に封筒、mediaType は application/json）で送る",
+      "artifact": "A2A では：タスクの結果（Artifact）として返す",
+      "status": "A2A では：タスクの状態に添える Message として返す",
+      "state": "A2A では：タスクの状態だけを返す"
+    },
+    "task": "タスク",
+    "state_label": "状態",
+    "duplicate": "再送と判定：処理はせず、最初の結果を返した",
+    "resent": "同じ message_id での再送",
+    "raw": "封筒の中身（JSON）を見る",
+    "facts": {
+      "shipment_id": "船積みID",
+      "route": "経路",
+      "cargo": "貨物",
+      "cargo_text": "明細 {lines}件、コンテナ {containers}本、総重量 {gross} kg",
+      "reply_by": "回答の期限",
+      "quote_number": "見積番号",
+      "charge": "料金",
+      "total": "合計",
+      "valid_until": "見積の有効期限",
+      "note": "メモ",
+      "booking_number": "ブッキング番号",
+      "etd": "出発予定日",
+      "eta": "到着予定日",
+      "cargo_cutoff_at": "貨物の搬入期限",
+      "documents": "書類",
+      "discrepancy": "食い違い",
+      "discrepancy_text": "{document}／{path}：書類は {document_value}、正本は {authoritative_value}",
+      "draft_number": "下書きの番号",
+      "mock": "注意",
+      "mock_text": "これは模擬の下書きです。実際の申告ではなく、どこにも提出していません。",
+      "exporter": "輸出者",
+      "consignee": "荷受人",
+      "incoterms": "取引条件",
+      "invoice_amount": "仕入書の金額",
+      "line": "明細 {no}",
+      "line_text": "{description}／{quantity} {unit}／{amount}",
+      "hs_code_jp": "明細 {no} の品目番号",
+      "unverified_value": "空欄（出典で確かめるまで入れない）",
+      "reason": "理由",
+      "error_code": "エラーの種類",
+      "error_text": "説明",
+      "issue": "問題の箇所"
+    },
+    "footer": "この記録は scripts/demo.py が作りました。何度実行しても同じ内容になります。",
+    "transport_note_a2a": "この記録は、2つのエージェントが A2A の通信で実際にやり取りしたものです。通信は、このパソコンの中だけで行っています。",
+    "footer_a2a": "この記録は scripts/demo_a2a.py が作りました。タスクの識別子は、実行のたびに変わります。",
+    "cards_title": "2つのエージェントの AgentCard",
+    "card_line": "{name}：プロファイルの拡張の宣言 {declared}、通信の種類 {binding}、A2A の版 {version}、引き受ける種類 {accepts}",
+    "yes": "あり",
+    "no": "なし",
+    "none": "なし"
+  },
+  "conformance": {
+    "title": "適合テスト",
+    "target": "対象: {url}（{name}）",
+    "pass": "合格",
+    "fail": "不合格",
+    "skip": "対象外",
+    "skip_reason": "相手の AgentCard の宣言（引き受ける種類、拡張が必須かどうか）と合わないため",
+    "summary": "{total}件中、合格 {passed}件、不合格 {failed}件、対象外 {skipped}件",
+    "all_passed": "対象のテストは、すべて合格しました。",
+    "some_failed": "合格しなかったテストがあります。",
+    "nothing_ran": "対象になるテストが1件もありませんでした。",
+    "no_card": "相手の AgentCard を取得できませんでした（{detail}）",
+    "place": {
+      "artifact": "結果（Artifact）",
+      "status": "状態に添えた Message"
+    },
+    "problems": {
+      "p_state": "手順{step}: 状態が {actual} でした（期待は {expected}）",
+      "p_reply_missing": "手順{step}: 返事の封筒がありません（期待は {expected}）",
+      "p_reply_unexpected": "手順{step}: 返事の封筒が返りました（期待は、封筒なし）",
+      "p_reply_place": "手順{step}: 返事の置き場所が {actual} でした（期待は {expected}）",
+      "p_reply_type": "手順{step}: 返事の種類が {actual} でした（期待は {expected}）",
+      "p_reply_invalid": "手順{step}: 返事の封筒が決まりに合いません（{detail}）",
+      "p_in_reply_to": "手順{step}: 返事の in_reply_to が、送ったメッセージを指していません",
+      "p_correlation": "手順{step}: 返事の correlation_id が、送ったものと違います",
+      "p_code": "手順{step}: エラーの種類が {actual} でした（期待は {expected}）",
+      "p_issue": "手順{step}: issues に {expected} がありません",
+      "p_payload": "手順{step}: 返事の {path} が {actual} でした（期待は {expected}）",
+      "p_same_reply": "手順{step}: 再送への返事が、最初の返事と違います",
+      "p_error": "手順{step}: 通信で失敗しました（{detail}）",
+      "p_a2a_error": "手順{step}: A2A のエラーが {actual} でした（期待は {expected}）",
+      "p_a2a_error_missing": "手順{step}: A2A のエラー {expected} が返るはずが、タスクが返りました（状態は {state}）",
+      "card_no_extension": "AgentCard に、プロファイルの拡張（{uri}）が宣言されていません",
+      "card_profile": "AgentCard の拡張の params.profile が {expected} ではありません",
+      "card_version": "AgentCard の拡張の params.profile_versions に {expected} がありません",
+      "card_interface": "AgentCard に、A2A {expected} の接続先がありません"
+    }
+  },
+  "prepublish": {
+    "title": "公開前の検査",
+    "commit": "検査したコミット：{commit}{dirty}",
+    "dirty": "（まだコミットしていない変更を含む）",
+    "scope": "対象：git で管理しているファイル {files}件、履歴の中だけにあるファイルの版 {history}件、コミットの説明文 {commits}件",
+    "stage2_skipped": "2段目（名前の一覧と作者名）は実行していません。一覧を用意した人が、--names で一覧を指定して自分で実行します。",
+    "names_scope": "2段目：名前の一覧 {count}語で調べました（語そのものは表示も記録もしません）。",
+    "author_scope": "2段目：コミットの作者名が {author} かどうかも調べました。",
+    "categories": {
+      "secret": "秘密情報（鍵やトークンの形）",
+      "tracked_private": "git に入れてはいけないファイル",
+      "email": "メールアドレス",
+      "phone": "電話番号",
+      "user_path": "パソコンの利用者名を含む場所",
+      "sample_marker": "見本の架空の印がない",
+      "document_file": "書類や画像のファイル",
+      "name_list": "名前の一覧にある語",
+      "author": "作者名が {author} ではないコミット"
+    },
+    "count_line": "{label}：{count}件",
+    "group": "【{label}】{count}件",
+    "fixes": {
+      "secret": "本物の鍵やトークンなら、消したうえで、発行元で使えないようにしてください。",
+      "tracked_private": "git から外してください。.env や data/private/ の中身は git に入れません。",
+      "email": "見本や説明に使うなら、example.com のような例示用の名前に変えてください。",
+      "phone": "本物の番号なら消してください。",
+      "user_path": "利用者名の部分を消すか、＜名前＞のように伏せてください。",
+      "sample_marker": "架空と分かるように、当事者名には Sample・Example・Demo のどれかを、品名には (sample) を入れてください。",
+      "document_file": "実データが写っていないかを目で確かめてください。要らなければ外してください。",
+      "name_list": "その場所から名前を消してください。",
+      "author": "作者名を直すには、履歴の書き換えが要ります。"
+    },
+    "where": {
+      "history_blob": "{location}（履歴の中だけ。版 {blob}）",
+      "history_path": "{location}（履歴の中だけ）",
+      "commit_message": "コミット {commit} の説明文 {line}行目",
+      "commit_author": "コミット {commit} の作者・記録者",
+      "path": "ファイルの名前 {path}",
+      "ref": "枝やタグの名前 {path}",
+      "field": "（項目 {field}）",
+      "list_line": "（一覧の{line}行目の語）"
+    },
+    "history_note": "履歴やコミットの説明文の中だけにあるものは、今のファイルを直しても消えません。消すには履歴の書き換えが要るので、公開の前に相談してください。",
+    "all_clear": "見つかったものは 0件です。",
+    "found": "見つかったものが {count}件あります。",
+    "report_title": "公開前の検査の記録",
+    "when": "実施日時：{when}",
+    "table_category": "検査",
+    "table_count": "件数",
+    "report_places": "見つかった場所",
+    "none": "なし",
+    "report_written": "記録を書きました：{path}",
+    "no_git": "git の管理下にあるフォルダで実行してください：{path}",
+    "names_missing": "名前の一覧のファイルが見つかりません：{path}",
+    "names_empty": "名前の一覧に、語が1つもありません：{path}",
+    "names_encoding": "名前の一覧を UTF-8 として読めません：{path}。メモ帳で開き、「名前を付けて保存」で文字コードを UTF-8 にして保存し直してください。"
+  }
+}

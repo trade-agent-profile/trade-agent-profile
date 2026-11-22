@@ -1,0 +1,27 @@
+{
+  "profile": "trade-agent-profile",
+  "profile_version": "0.1.0",
+  "message_type": "error",
+  "message_id": "33597ce3-5d36-552b-86a9-962fddac02eb",
+  "correlation_id": "50b77fe4-7931-5f06-acf2-2cd64ddbab48",
+  "in_reply_to": "a36d9b15-f36b-5e37-9e28-f12e9897b268",
+  "sent_at": "2026-12-09T10:32:00+09:00",
+  "sender": {
+    "role": "forwarder",
+    "name": "Demo Forwarding & Customs K.K.",
+    "id": "demo-forwarder-broker"
+  },
+  "payload": {
+    "code": "PROFILE_VERSION_UNSUPPORTED",
+    "text": {
+      "ja": "プロファイルの版が合わないため、処理しませんでした。扱える版は 0.1.0 です。",
+      "en": "The profile version is not supported, so the message was not processed. The supported version is 0.1.0."
+    },
+    "issues": [
+      {
+        "code": "PROFILE_VERSION_UNSUPPORTED",
+        "path": "profile_version"
+      }
+    ]
+  }
+}
