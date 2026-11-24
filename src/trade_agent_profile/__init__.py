@@ -13,7 +13,9 @@ from .profile import (
     SUPPORTED_PROFILE_VERSIONS,
 )
 from .rules import find_discrepancies
+from .upgrade import UpgradeError, upgrade_shipment
 from .validator import (
+    LATEST_CONTRACT_VERSION,
     SUPPORTED_CONTRACT_VERSIONS,
     load_schema,
     validate_file,
@@ -23,6 +25,7 @@ from .validator import (
 __version__ = "0.1.0"
 
 __all__ = [
+    "LATEST_CONTRACT_VERSION",
     "MESSAGE_TYPES",
     "PROFILE",
     "PROFILE_URI",
@@ -30,11 +33,13 @@ __all__ = [
     "SUPPORTED_CONTRACT_VERSIONS",
     "SUPPORTED_PROFILE_VERSIONS",
     "Issue",
+    "UpgradeError",
     "ValidationResult",
     "__version__",
     "find_discrepancies",
     "load_schema",
     "new_message",
+    "upgrade_shipment",
     "validate_any_file",
     "validate_file",
     "validate_message",

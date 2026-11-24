@@ -28,6 +28,22 @@ STEPS = [
         [PYTHON, "scripts/validate.py", "samples/invalid", "--expected", "--quiet", "--lang", "ja"],
     ),
     (
+        "見本の検証（前の版 0.1.0 の正しい例。書き換えなくても合格すること）",
+        [PYTHON, "scripts/validate.py", "samples/v0.1.0/valid", "--quiet", "--lang", "ja"],
+    ),
+    (
+        "見本の検証（前の版 0.1.0 の誤り例）",
+        [
+            PYTHON,
+            "scripts/validate.py",
+            "samples/v0.1.0/invalid",
+            "--expected",
+            "--quiet",
+            "--lang",
+            "ja",
+        ],
+    ),
+    (
         "見本の検証（メッセージ）",
         [PYTHON, "scripts/validate.py", "samples/messages", "--quiet", "--lang", "ja"],
     ),

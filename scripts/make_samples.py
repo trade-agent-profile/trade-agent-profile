@@ -27,8 +27,16 @@ sys.path.insert(0, str(ROOT / "scripts"))
 
 from make_conformance import conformance_cases  # noqa: E402
 
-VERSION = "0.1.0"
+VERSION = "0.1.1"  # いまの版。見本（samples/valid、samples/invalid）はこの版で作る
+OLD_VERSION = "0.1.0"  # 前の版。同じ見本を、足した項目を外した形でも作る（samples/v0.1.0/）
 Json = dict[str, Any]
+
+# 0.1.1 で足した項目（入れ物 → 項目の名前）
+ADDED_0_1_1 = {
+    "parties": ("notify_parties",),
+    "trade_terms": ("freight_amount", "insurance_premium_amount"),
+    "transport": ("vessel_name", "voyage_number", "booking_number"),
+}
 
 # 架空の当事者（名前に Sample / Example / Demo を入れて、実在の会社と区別する）
 SELLER_A = ("Sample Metal Recycling K.K.", "1-1 Sample, Yokohama", "JP")
@@ -37,6 +45,10 @@ SELLER_C = ("Demo Resource Recovery Co., Ltd.", "3-3 Demo, Osaka", "JP")
 BUYER_A = ("Sample Trading (Shanghai) Co., Ltd.", "1 Sample Rd, Shanghai", "CN")
 BUYER_B = ("Example Renewable Materials (Ningbo) Co., Ltd.", "8 Example Rd, Ningbo", "CN")
 BUYER_C = ("Demo Metal Industry (Tianjin) Co., Ltd.", "5 Demo Ave, Tianjin", "CN")
+# 架空の通知先（0.1.1 で足した項目の見本に使う）
+NOTIFY_FORWARDER = ("Example Logistics (Ningbo) Co., Ltd.", "9 Example Rd, Ningbo", "CN")
+NOTIFY_AGENT = ("Sample Forwarding (Wuhan) Co., Ltd.", "3 Sample St, Wuhan", "CN")
+NOTIFY_BROKER = ("Example Customs Service (Wuhan) Co., Ltd.", "5 Example St, Wuhan", "CN")
 
 
 def cn(serial: int) -> str:
@@ -153,18 +165,38 @@ def event(kind: str, at: str, by: str = "human", note: str | None = None) -> Jso
     return {"type": kind, "at": at, "by": by, "note": note}
 
 
-def terms(incoterms: str, place: str, currency: str, payment: str | None) -> Json:
+def terms(
+    incoterms: str,
+    place: str,
+    currency: str,
+    payment: str | None,
+    *,
+    freight: str | None = None,
+    insurance: str | None = None,
+) -> Json:
+    """取引条件。freight と insurance は、インボイスの金額に含まれている運賃と保険料の額。"""
     return {
         "incoterms": incoterms,
         "incoterms_version": "2020",
         "place": place,
         "currency": currency,
         "payment_terms": payment,
+        "freight_amount": None if freight is None else dec(freight, 2),
+        "insurance_premium_amount": None if insurance is None else dec(insurance, 2),
     }
 
 
 def transport(
-    mode: str, loading: str, discharge: str, etd: str | None, eta: str | None, boxes: list[Json]
+    mode: str,
+    loading: str,
+    discharge: str,
+    etd: str | None,
+    eta: str | None,
+    boxes: list[Json],
+    *,
+    vessel: str | None = None,
+    voyage: str | None = None,
+    booking: str | None = None,
 ) -> Json:
     return {
         "mode": mode,
@@ -172,6 +204,9 @@ def transport(
         "port_of_discharge": discharge,
         "etd": etd,
         "eta": eta,
+        "vessel_name": vessel,
+        "voyage_number": voyage,
+        "booking_number": booking,
         "containers": boxes,
     }
 
@@ -187,6 +222,7 @@ def shipment(
     documents: list[Json],
     events: list[Json],
     ext: Json | None = None,
+    notify: tuple[tuple[str, str, str], ...] = (),
 ) -> Json:
     return {
         "contract_version": VERSION,
@@ -197,6 +233,7 @@ def shipment(
             "shipper": party(seller),
             "exporter": party(seller),
             "consignee": party(buyer),
+            "notify_parties": [party(spec) for spec in notify],
         },
         "trade_terms": trade_terms,
         "transport": transport_,
@@ -206,6 +243,29 @@ def shipment(
         "events": events,
         "ext": ext or {},
     }
+
+
+def to_v010(data: Json) -> Json:
+    """0.1.1 の見本から、0.1.0 の見本を作る。
+
+    足した項目と、それを指す読み取り結果（documents[].fields）を外し、版を 0.1.0 にする。
+    版をわざと変えてある誤り例（版の不一致）では、版には触らない。
+    """
+    old = copy.deepcopy(data)
+    if old.get("contract_version") == VERSION:
+        old["contract_version"] = OLD_VERSION
+    added = [f"{section}.{key}" for section, keys in ADDED_0_1_1.items() for key in keys]
+    for section, keys in ADDED_0_1_1.items():
+        if isinstance(old.get(section), dict):
+            for key in keys:
+                old[section].pop(key, None)
+    for document in old.get("documents", []):
+        document["fields"] = {
+            key: value
+            for key, value in document["fields"].items()
+            if not key.startswith(tuple(added))
+        }
+    return old
 
 
 def v01() -> Json:
@@ -256,7 +316,8 @@ def v02() -> Json:
         "checked",
         SELLER_B,
         BUYER_B,
-        terms("CFR", "CNNGB", "USD", "L/C at sight"),
+        # CFR：インボイスの金額に運賃が含まれる（保険は買い手がかけるので null）
+        terms("CFR", "CNNGB", "USD", "L/C at sight", freight="1900"),
         transport(
             "sea",
             "JPNGO",
@@ -267,6 +328,9 @@ def v02() -> Json:
                 container(305439, "22G1", ["SL000002"], "20350"),
                 container(305440, "22G1", ["SL000003"], "19870"),
             ],
+            vessel="SAMPLE EXPRESS",
+            voyage="0123W",
+            booking="BKG-SAMPLE-0002",
         ),
         [
             line(
@@ -320,6 +384,7 @@ def v02() -> Json:
                 "Invoice and packing list agree with the shipment data.",
             ),
         ],
+        notify=(NOTIFY_FORWARDER,),
     )
 
 
@@ -330,7 +395,15 @@ def v03() -> Json:
         "submitted",
         SELLER_C,
         BUYER_C,
-        terms("CIF", "CNTXG", "USD", "T/T 30% in advance, 70% against copy of B/L"),
+        # CIF：インボイスの金額に、運賃と保険料の両方が含まれる
+        terms(
+            "CIF",
+            "CNTXG",
+            "USD",
+            "T/T 30% in advance, 70% against copy of B/L",
+            freight="2850",
+            insurance="172.90",
+        ),
         transport(
             "sea",
             "JPOSA",
@@ -342,6 +415,9 @@ def v03() -> Json:
                 container(305442, "45G1", ["SL000005"], "23620"),
                 container(305443, "45G1", ["SL000006"], "25150"),
             ],
+            vessel="DEMO PIONEER",
+            voyage="0456N",
+            booking="BKG-DEMO-0003",
         ),
         [
             line(1, baled, "24000", "KGM", "24000", "24120", 24, "BL", "1.32", 305441),
@@ -369,6 +445,13 @@ def v03() -> Json:
                     "trade_terms.incoterms": field(
                         "CIF", 1, [60.0, 180.0, 96.0, 194.0], "ai", 0.99
                     ),
+                    # 0.1.1 で足した項目の読み取り結果（インボイスの内訳の行）
+                    "trade_terms.freight_amount": field(
+                        "2850.00", 1, [402.5, 560.0, 518.0, 574.0], "ai", 0.96
+                    ),
+                    "trade_terms.insurance_premium_amount": field(
+                        "172.90", 1, [402.5, 578.0, 518.0, 592.0], "ai", 0.94
+                    ),
                 },
             ),
             doc(
@@ -387,6 +470,10 @@ def v03() -> Json:
                 {
                     "transport.containers[0].number": field(cn(305441)),
                     "transport.port_of_loading": field("JPOSA"),
+                    # 0.1.1 で足した項目の読み取り結果（船荷証券の船名・航海番号・通知先の欄）
+                    "transport.vessel_name": field("DEMO PIONEER"),
+                    "transport.voyage_number": field("0456N"),
+                    "parties.notify_parties[0].name": field(BUYER_C[0]),
                 },
             ),
             doc("insurance_certificate", "INS-0003", "2026-12-12"),
@@ -398,6 +485,7 @@ def v03() -> Json:
             ),
             event("submitted", "2026-12-12T09:30:00+09:00"),
         ],
+        notify=(BUYER_C,),  # 通知先が荷受人と同じ会社の例
     )
 
 
@@ -502,7 +590,8 @@ def v06() -> Json:
         "checked",
         SELLER_B,
         BUYER_A,
-        terms("CIP", "CNSHA", "USD", "T/T in advance"),
+        # CIP（航空）：運賃と保険料が含まれる。船名・航海番号は、海上でないので null のまま
+        terms("CIP", "CNSHA", "USD", "T/T in advance", freight="210", insurance="4.50"),
         transport("air", "JPNRT", "CNSHA", "2026-12-08", "2026-12-08", []),
         [
             line(
@@ -573,6 +662,9 @@ def v08() -> Json:
                 container(305445, "22G1", ["SL000007"], "20240"),
                 container(305446, "22G1", ["SL000008"], "20250"),
             ],
+            vessel="EXAMPLE RIVER",  # 複合輸送のうち、海上の区間の本船
+            voyage="0789E",
+            booking="BKG-EXAMPLE-0008",
         ),
         [
             line(
@@ -644,6 +736,7 @@ def v08() -> Json:
             event("checked", "2026-12-13T13:00:00+09:00", "rule"),
             event("submitted", "2026-12-14T10:00:00+09:00"),
         ],
+        notify=(NOTIFY_AGENT, NOTIFY_BROKER),  # 通知先が2件の例（3件まで書ける）
     )
 
 
@@ -723,7 +816,13 @@ def v10() -> Json:
         "approved",
         SELLER_A,
         BUYER_C,
-        terms("CPT", "CNDLC", "USD", "T/T 20% in advance, balance against documents"),
+        terms(
+            "CPT",
+            "CNDLC",
+            "USD",
+            "T/T 20% in advance, balance against documents",
+            freight="3100",
+        ),
         transport(
             "multimodal",
             "JPTYO",
@@ -735,6 +834,7 @@ def v10() -> Json:
                 container(305449, "22G1", ["SL000011"], "19680"),
                 container(305450, "22G1", ["SL000012", "SL000013"], "21700"),
             ],
+            booking="BKG-SAMPLE-0010",  # 船名と航海番号は、まだ分からない（null）
         ),
         [
             line(
@@ -994,15 +1094,25 @@ def dumps(data: Any) -> str:
 
 
 def build_all() -> dict[str, str]:
-    """作るファイルの一覧（場所 → 中身）。"""
+    """作るファイルの一覧（場所 → 中身）。
+
+    契約の見本は、いまの版（samples/valid、samples/invalid）と、前の版 0.1.0
+    （samples/v0.1.0/。足した項目を外しただけで、ほかは同じ）の両方を作る。
+    メッセージ・適合テスト・台本デモは、プロファイル 0.1.0 のもので、契約 0.1.0 の
+    データのままにしてある。
+    """
     files: dict[str, str] = {}
     for name, builder in VALID.items():
-        files[f"samples/valid/{name}.json"] = dumps(builder())
+        data = builder()
+        files[f"samples/valid/{name}.json"] = dumps(data)
+        files[f"samples/v{OLD_VERSION}/valid/{name}.json"] = dumps(to_v010(data))
     for name, data, code, path in invalid_cases():
+        expected = dumps({"valid": False, "errors": [{"code": code, "path": path}]})
         files[f"samples/invalid/{name}.json"] = dumps(data)
-        expected = {"valid": False, "errors": [{"code": code, "path": path}]}
-        files[f"samples/invalid/{name}.expected.json"] = dumps(expected)
-    demo = demo_shipment()
+        files[f"samples/invalid/{name}.expected.json"] = expected
+        files[f"samples/v{OLD_VERSION}/invalid/{name}.json"] = dumps(to_v010(data))
+        files[f"samples/v{OLD_VERSION}/invalid/{name}.expected.json"] = expected
+    demo = to_v010(demo_shipment())
     files["src/trade_agent_profile/data/demo_shipment.json"] = dumps(demo)
     for name, envelope in message_samples(demo).items():
         files[f"samples/messages/{name}.json"] = dumps(envelope)

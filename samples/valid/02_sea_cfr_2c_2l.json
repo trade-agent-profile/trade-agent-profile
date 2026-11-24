@@ -1,5 +1,5 @@
 {
-  "contract_version": "0.1.0",
+  "contract_version": "0.1.1",
   "shipment_id": "SHP-2026-0002",
   "direction": "export",
   "status": "checked",
@@ -18,14 +18,23 @@
       "name": "Example Renewable Materials (Ningbo) Co., Ltd.",
       "address": "8 Example Rd, Ningbo",
       "country": "CN"
-    }
+    },
+    "notify_parties": [
+      {
+        "name": "Example Logistics (Ningbo) Co., Ltd.",
+        "address": "9 Example Rd, Ningbo",
+        "country": "CN"
+      }
+    ]
   },
   "trade_terms": {
     "incoterms": "CFR",
     "incoterms_version": "2020",
     "place": "CNNGB",
     "currency": "USD",
-    "payment_terms": "L/C at sight"
+    "payment_terms": "L/C at sight",
+    "freight_amount": "1900.00",
+    "insurance_premium_amount": null
   },
   "transport": {
     "mode": "sea",
@@ -33,6 +42,9 @@
     "port_of_discharge": "CNNGB",
     "etd": "2026-12-12",
     "eta": "2026-12-17",
+    "vessel_name": "SAMPLE EXPRESS",
+    "voyage_number": "0123W",
+    "booking_number": "BKG-SAMPLE-0002",
     "containers": [
       {
         "number": "CSQU3054399",

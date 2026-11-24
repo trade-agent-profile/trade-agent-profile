@@ -1,5 +1,5 @@
 {
-  "contract_version": "0.1.0",
+  "contract_version": "0.1.1",
   "shipment_id": "SHP-2026-0005",
   "direction": "export",
   "status": "approved",
@@ -18,14 +18,17 @@
       "name": "Example Renewable Materials (Ningbo) Co., Ltd.",
       "address": "8 Example Rd, Ningbo",
       "country": "CN"
-    }
+    },
+    "notify_parties": []
   },
   "trade_terms": {
     "incoterms": "FOB",
     "incoterms_version": "2020",
     "place": "JPOSA",
     "currency": "JPY",
-    "payment_terms": "T/T within 5 days after B/L date"
+    "payment_terms": "T/T within 5 days after B/L date",
+    "freight_amount": null,
+    "insurance_premium_amount": null
   },
   "transport": {
     "mode": "sea",
@@ -33,6 +36,9 @@
     "port_of_discharge": "CNTAO",
     "etd": "2026-12-20",
     "eta": "2026-12-24",
+    "vessel_name": null,
+    "voyage_number": null,
+    "booking_number": null,
     "containers": []
   },
   "lines": [

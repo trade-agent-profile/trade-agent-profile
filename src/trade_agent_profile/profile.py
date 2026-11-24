@@ -10,7 +10,7 @@ PROFILE_VERSION = "0.1.0"
 SUPPORTED_PROFILE_VERSIONS = ("0.1.0",)
 
 # A2A の拡張として AgentCard で宣言するときの識別 URI（A2A 4.6.1、4.6.3）。
-# 公開する場所が決まるまでの仮の値で、M4 で確定する。.invalid は実在しない宛先。
+# 版を入れてあり、意味が変わる変更では新しい URI にする。この住所には仕様の案内を置く。
 PROFILE_URI = "https://trade-agent-profile.github.io/v0.1"
 
 # 封筒を A2A の Part に載せるときの種類（A2A 4.1.6）

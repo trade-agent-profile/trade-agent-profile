@@ -64,11 +64,15 @@ def repo(tmp_path: Path) -> Repo:
 
 
 def _sample(name: str, description: str) -> str:
-    return json.dumps({"parties": {"shipper": {"name": name}}, "lines": [{"description": description}]})
+    return json.dumps(
+        {"parties": {"shipper": {"name": name}}, "lines": [{"description": description}]}
+    )
 
 
 def test_clean_repository_has_nothing(repo: Repo) -> None:
-    repo.write("README.md", "連絡先の例: someone@example.com\n置き場所の例: C:\\Users\\<名前>\\Desktop\n")
+    repo.write(
+        "README.md", "連絡先の例: someone@example.com\n置き場所の例: C:\\Users\\<名前>\\Desktop\n"
+    )
     repo.write("samples/valid/a.json", _sample("Sample Metal K.K.", "Copper scrap (sample)"))
     repo.commit("最初の版\n\nCo-Authored-By: Claude <noreply@anthropic.com>")
     result = prepublish.scan_repository(repo.root)
@@ -148,7 +152,9 @@ def test_output_and_report_never_contain_the_found_text(
         for secret in (FAKE_KEY, PERSONAL_MAIL, PHONE, "fictional-user"):
             assert secret not in text
         assert "notes.txt:1" in text and "notes.txt:4" in text
-    assert "これは実験的な参照仕様です。" in recorded and "見つかったものが 4件あります。" in recorded
+    assert (
+        "これは実験的な参照仕様です。" in recorded and "見つかったものが 4件あります。" in recorded
+    )
 
 
 def test_clean_run_exits_zero_and_records_zero(repo: Repo, tmp_path: Path) -> None:
@@ -158,7 +164,10 @@ def test_clean_run_exits_zero_and_records_zero(repo: Repo, tmp_path: Path) -> No
     args = ["--root", str(repo.root), "--report", str(report), "--lang", "ja"]
     assert prepublish.main(args) == prepublish.EXIT_OK
     recorded = report.read_text(encoding="utf-8")
-    assert "見つかったものは 0件です。" in recorded and "2段目（名前の一覧と作者名）は実行していません" in recorded
+    assert (
+        "見つかったものは 0件です。" in recorded
+        and "2段目（名前の一覧と作者名）は実行していません" in recorded
+    )
 
 
 def test_names_are_found_everywhere_but_never_shown(
@@ -251,8 +260,13 @@ def test_staged_files_without_any_commit_can_be_checked(repo: Repo, tmp_path: Pa
     repo.write("notes.txt", f"key = {FAKE_KEY}\n")
     repo.git("add", "-A")
     result = prepublish.scan_repository(repo.root)
-    assert {(f.category, f.where, f.path) for f in result.findings} == {("secret", "file", "notes.txt")}
+    assert {(f.category, f.where, f.path) for f in result.findings} == {
+        ("secret", "file", "notes.txt")
+    }
     assert (result.files, result.history_blobs, result.commits) == (2, 0, 0)
     assert prepublish.head_state(repo.root) == ("-", True)
     report = tmp_path / "prepublish.md"
-    assert prepublish.main(["--root", str(repo.root), "--report", str(report)]) == prepublish.EXIT_FOUND
+    assert (
+        prepublish.main(["--root", str(repo.root), "--report", str(report)])
+        == prepublish.EXIT_FOUND
+    )

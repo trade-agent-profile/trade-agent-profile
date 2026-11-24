@@ -1,0 +1,229 @@
+{
+  "contract_version": "0.1.0",
+  "shipment_id": "SHP-2026-0003",
+  "direction": "export",
+  "status": "submitted",
+  "parties": {
+    "shipper": {
+      "name": "Demo Resource Recovery Co., Ltd.",
+      "address": "3-3 Demo, Osaka",
+      "country": "JP"
+    },
+    "exporter": {
+      "name": "Demo Resource Recovery Co., Ltd.",
+      "address": "3-3 Demo, Osaka",
+      "country": "JP"
+    },
+    "consignee": {
+      "name": "Demo Metal Industry (Tianjin) Co., Ltd.",
+      "address": "5 Demo Ave, Tianjin",
+      "country": "CN"
+    }
+  },
+  "trade_terms": {
+    "incoterms": "CIF",
+    "incoterms_version": "2020",
+    "place": "CNTXG",
+    "currency": "USD",
+    "payment_terms": "T/T 30% in advance, 70% against copy of B/L"
+  },
+  "transport": {
+    "mode": "sea",
+    "port_of_loading": "JPOSA",
+    "port_of_discharge": "CNTXG",
+    "etd": "2026-12-15",
+    "eta": "2026-12-21",
+    "containers": [
+      {
+        "number": "CSQU3054418",
+        "iso_type": "45G1",
+        "seals": [
+          "SL000004"
+        ],
+        "gross_weight_kg": "24120.000"
+      },
+      {
+        "number": "CSQU3054423",
+        "iso_type": "45G1",
+        "seals": [
+          "SL000005"
+        ],
+        "gross_weight_kg": "23620.000"
+      },
+      {
+        "number": "CSQU3054439",
+        "iso_type": "45G1",
+        "seals": [
+          "SL000006"
+        ],
+        "gross_weight_kg": "25150.000"
+      }
+    ]
+  },
+  "lines": [
+    {
+      "line_no": 1,
+      "description": "Aluminium alloy scrap, baled (sample)",
+      "hs_code_jp": null,
+      "hs_code_dest": null,
+      "origin_country": "JP",
+      "quantity": "24000.000",
+      "quantity_unit": "KGM",
+      "net_weight_kg": "24000.000",
+      "gross_weight_kg": "24120.000",
+      "packages": 24,
+      "package_type": "BL",
+      "unit_price": "1.32",
+      "amount": "31680.00",
+      "container_number": "CSQU3054418"
+    },
+    {
+      "line_no": 2,
+      "description": "Aluminium alloy scrap, baled (sample)",
+      "hs_code_jp": null,
+      "hs_code_dest": null,
+      "origin_country": "JP",
+      "quantity": "23500.000",
+      "quantity_unit": "KGM",
+      "net_weight_kg": "23500.000",
+      "gross_weight_kg": "23620.000",
+      "packages": 24,
+      "package_type": "BL",
+      "unit_price": "1.32",
+      "amount": "31020.00",
+      "container_number": "CSQU3054423"
+    },
+    {
+      "line_no": 3,
+      "description": "Stainless steel scrap (sample)",
+      "hs_code_jp": null,
+      "hs_code_dest": null,
+      "origin_country": "JP",
+      "quantity": "25000.000",
+      "quantity_unit": "KGM",
+      "net_weight_kg": "25000.000",
+      "gross_weight_kg": "25150.000",
+      "packages": 30,
+      "package_type": "BL",
+      "unit_price": "0.95",
+      "amount": "23750.00",
+      "container_number": "CSQU3054439"
+    }
+  ],
+  "totals": {
+    "amount": "86450.00",
+    "net_weight_kg": "72500.000",
+    "gross_weight_kg": "72890.000",
+    "packages": 78
+  },
+  "documents": [
+    {
+      "doc_type": "commercial_invoice",
+      "doc_number": "INV-0003",
+      "issue_date": "2026-12-10",
+      "file": "samples/docs/INV-0003.pdf",
+      "sha256": null,
+      "fields": {
+        "totals.amount": {
+          "value": "86450.00",
+          "page": 1,
+          "bbox": [
+            402.5,
+            598.0,
+            518.0,
+            612.0
+          ],
+          "extracted_by": "ai",
+          "confidence": 0.97
+        },
+        "trade_terms.incoterms": {
+          "value": "CIF",
+          "page": 1,
+          "bbox": [
+            60.0,
+            180.0,
+            96.0,
+            194.0
+          ],
+          "extracted_by": "ai",
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "doc_type": "packing_list",
+      "doc_number": "PL-0003",
+      "issue_date": "2026-12-10",
+      "file": "samples/docs/PL-0003.pdf",
+      "sha256": null,
+      "fields": {
+        "totals.packages": {
+          "value": 78,
+          "page": 1,
+          "bbox": null,
+          "extracted_by": "rule",
+          "confidence": null
+        },
+        "totals.net_weight_kg": {
+          "value": "72500.000",
+          "page": 1,
+          "bbox": null,
+          "extracted_by": "rule",
+          "confidence": null
+        }
+      }
+    },
+    {
+      "doc_type": "bill_of_lading",
+      "doc_number": "BL-0003",
+      "issue_date": "2026-12-15",
+      "file": "samples/docs/BL-0003.pdf",
+      "sha256": null,
+      "fields": {
+        "transport.containers[0].number": {
+          "value": "CSQU3054418",
+          "page": 1,
+          "bbox": null,
+          "extracted_by": "human",
+          "confidence": null
+        },
+        "transport.port_of_loading": {
+          "value": "JPOSA",
+          "page": 1,
+          "bbox": null,
+          "extracted_by": "human",
+          "confidence": null
+        }
+      }
+    },
+    {
+      "doc_type": "insurance_certificate",
+      "doc_number": "INS-0003",
+      "issue_date": "2026-12-12",
+      "file": "samples/docs/INS-0003.pdf",
+      "sha256": null,
+      "fields": {}
+    }
+  ],
+  "events": [
+    {
+      "type": "created",
+      "at": "2026-12-08T10:00:00+09:00",
+      "by": "human",
+      "note": null
+    },
+    {
+      "type": "checked",
+      "at": "2026-12-11T14:00:00+09:00",
+      "by": "rule",
+      "note": "All totals agree with the lines."
+    },
+    {
+      "type": "submitted",
+      "at": "2026-12-12T09:30:00+09:00",
+      "by": "human",
+      "note": null
+    }
+  ],
+  "ext": {}
+}

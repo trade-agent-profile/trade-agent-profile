@@ -25,6 +25,8 @@ dist/*
 *.sqlite3
 # A2A の通信で実行したデモの記録（タスクの識別子が毎回変わる。scripts\demo_a2a.py で作り直せる）
 reports/demo-a2a.html
+# 書き換えの道具（scripts\upgrade.py）を、README の例のとおりに試したときの書き出し先
+upgraded/
 
 # 公開用の置き場の印（scripts/export_public.py が置く。公開用の置き場の git には入れない）
 .export-public.json

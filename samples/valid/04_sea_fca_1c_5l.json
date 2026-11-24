@@ -1,5 +1,5 @@
 {
-  "contract_version": "0.1.0",
+  "contract_version": "0.1.1",
   "shipment_id": "SHP-2026-0004",
   "direction": "export",
   "status": "draft",
@@ -18,14 +18,17 @@
       "name": "Sample Trading (Shanghai) Co., Ltd.",
       "address": "1 Sample Rd, Shanghai",
       "country": "CN"
-    }
+    },
+    "notify_parties": []
   },
   "trade_terms": {
     "incoterms": "FCA",
     "incoterms_version": "2020",
     "place": "JPTYO",
     "currency": "USD",
-    "payment_terms": null
+    "payment_terms": null,
+    "freight_amount": null,
+    "insurance_premium_amount": null
   },
   "transport": {
     "mode": "sea",
@@ -33,6 +36,9 @@
     "port_of_discharge": "CNSHA",
     "etd": null,
     "eta": null,
+    "vessel_name": null,
+    "voyage_number": null,
+    "booking_number": null,
     "containers": [
       {
         "number": "CSQU3054444",

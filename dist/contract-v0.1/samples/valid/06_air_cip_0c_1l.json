@@ -1,5 +1,5 @@
 {
-  "contract_version": "0.1.0",
+  "contract_version": "0.1.1",
   "shipment_id": "SHP-2026-0006",
   "direction": "export",
   "status": "checked",
@@ -18,14 +18,17 @@
       "name": "Sample Trading (Shanghai) Co., Ltd.",
       "address": "1 Sample Rd, Shanghai",
       "country": "CN"
-    }
+    },
+    "notify_parties": []
   },
   "trade_terms": {
     "incoterms": "CIP",
     "incoterms_version": "2020",
     "place": "CNSHA",
     "currency": "USD",
-    "payment_terms": "T/T in advance"
+    "payment_terms": "T/T in advance",
+    "freight_amount": "210.00",
+    "insurance_premium_amount": "4.50"
   },
   "transport": {
     "mode": "air",
@@ -33,6 +36,9 @@
     "port_of_discharge": "CNSHA",
     "etd": "2026-12-08",
     "eta": "2026-12-08",
+    "vessel_name": null,
+    "voyage_number": null,
+    "booking_number": null,
     "containers": []
   },
   "lines": [

@@ -31,7 +31,15 @@ _FIELD_ROOTS = (
     "totals",
 )
 # 数として比べる項目（"22500.0" と "22500.00" を同じとみなす）
-_DECIMAL_LEAVES = ("amount", "quantity", "net_weight_kg", "gross_weight_kg", "unit_price")
+_DECIMAL_LEAVES = (
+    "amount",
+    "quantity",
+    "net_weight_kg",
+    "gross_weight_kg",
+    "unit_price",
+    "freight_amount",  # 0.1.1 で足した項目
+    "insurance_premium_amount",  # 同上
+)
 _NUMBER_RE = re.compile(r"^-?[0-9]+(\.[0-9]+)?$")
 
 

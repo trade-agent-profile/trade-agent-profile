@@ -17,11 +17,15 @@ DIST = ROOT / "dist" / "contract-v0.1"
 AUTHORED = ("README.ja.md", "CHANGELOG.md")
 
 
+# 契約（shipment.json）の見本だけを配る。いまの版と、前の版（0.1.0）の両方
+SAMPLE_FOLDERS = ("valid", "invalid", "v0.1.0/valid", "v0.1.0/invalid")
+
+
 def planned() -> dict[Path, Path]:
     """写すファイルの一覧（写し先 → 正本）。"""
     files = {DIST / "shipment.schema.json": ROOT / "schema" / "shipment.schema.json"}
     samples = ROOT / "samples"
-    for folder in ("valid", "invalid"):  # 契約（shipment.json）の見本だけを配る
+    for folder in SAMPLE_FOLDERS:
         for source in sorted((samples / folder).glob("*.json")):
             files[DIST / "samples" / source.relative_to(samples)] = source
     return files

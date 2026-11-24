@@ -1,5 +1,5 @@
 {
-  "contract_version": "0.1.0",
+  "contract_version": "0.1.1",
   "shipment_id": "SHP-2026-0010",
   "direction": "export",
   "status": "approved",
@@ -18,14 +18,17 @@
       "name": "Demo Metal Industry (Tianjin) Co., Ltd.",
       "address": "5 Demo Ave, Tianjin",
       "country": "CN"
-    }
+    },
+    "notify_parties": []
   },
   "trade_terms": {
     "incoterms": "CPT",
     "incoterms_version": "2020",
     "place": "CNDLC",
     "currency": "USD",
-    "payment_terms": "T/T 20% in advance, balance against documents"
+    "payment_terms": "T/T 20% in advance, balance against documents",
+    "freight_amount": "3100.00",
+    "insurance_premium_amount": null
   },
   "transport": {
     "mode": "multimodal",
@@ -33,6 +36,9 @@
     "port_of_discharge": "CNDLC",
     "etd": "2026-12-22",
     "eta": "2026-12-27",
+    "vessel_name": null,
+    "voyage_number": null,
+    "booking_number": "BKG-SAMPLE-0010",
     "containers": [
       {
         "number": "CSQU3054486",

@@ -1,0 +1,315 @@
+{
+  "contract_version": "0.1.0",
+  "shipment_id": "SHP-2026-0010",
+  "direction": "export",
+  "status": "approved",
+  "parties": {
+    "shipper": {
+      "name": "Sample Metal Recycling K.K.",
+      "address": "1-1 Sample, Yokohama",
+      "country": "JP"
+    },
+    "exporter": {
+      "name": "Sample Metal Recycling K.K.",
+      "address": "1-1 Sample, Yokohama",
+      "country": "JP"
+    },
+    "consignee": {
+      "name": "Demo Metal Industry (Tianjin) Co., Ltd.",
+      "address": "5 Demo Ave, Tianjin",
+      "country": "CN"
+    }
+  },
+  "trade_terms": {
+    "incoterms": "CPT",
+    "incoterms_version": "2020",
+    "place": "CNDLC",
+    "currency": "USD",
+    "payment_terms": "T/T 20% in advance, balance against documents"
+  },
+  "transport": {
+    "mode": "multimodal",
+    "port_of_loading": "JPTYO",
+    "port_of_discharge": "CNDLC",
+    "etd": "2026-12-22",
+    "eta": "2026-12-27",
+    "containers": [
+      {
+        "number": "CSQU3054486",
+        "iso_type": "45G1",
+        "seals": [
+          "SL000010"
+        ],
+        "gross_weight_kg": "22130.000"
+      },
+      {
+        "number": "CSQU3054491",
+        "iso_type": "22G1",
+        "seals": [
+          "SL000011"
+        ],
+        "gross_weight_kg": "19680.000"
+      },
+      {
+        "number": "CSQU3054505",
+        "iso_type": "22G1",
+        "seals": [
+          "SL000012",
+          "SL000013"
+        ],
+        "gross_weight_kg": "21700.000"
+      }
+    ]
+  },
+  "lines": [
+    {
+      "line_no": 1,
+      "description": "Aluminium alloy scrap, baled (sample)",
+      "hs_code_jp": null,
+      "hs_code_dest": null,
+      "origin_country": "JP",
+      "quantity": "22000.000",
+      "quantity_unit": "KGM",
+      "net_weight_kg": "22000.000",
+      "gross_weight_kg": "22130.000",
+      "packages": 22,
+      "package_type": "BL",
+      "unit_price": "1.35",
+      "amount": "29700.00",
+      "container_number": "CSQU3054486"
+    },
+    {
+      "line_no": 2,
+      "description": "Copper scrap (sample)",
+      "hs_code_jp": null,
+      "hs_code_dest": null,
+      "origin_country": "JP",
+      "quantity": "9000.000",
+      "quantity_unit": "KGM",
+      "net_weight_kg": "9000.000",
+      "gross_weight_kg": "9080.000",
+      "packages": 9,
+      "package_type": "BG",
+      "unit_price": "8.50",
+      "amount": "76500.00",
+      "container_number": "CSQU3054491"
+    },
+    {
+      "line_no": 3,
+      "description": "Brass scrap (sample)",
+      "hs_code_jp": null,
+      "hs_code_dest": null,
+      "origin_country": "JP",
+      "quantity": "10500.000",
+      "quantity_unit": "KGM",
+      "net_weight_kg": "10500.000",
+      "gross_weight_kg": "10600.000",
+      "packages": 10,
+      "package_type": "BG",
+      "unit_price": "5.20",
+      "amount": "54600.00",
+      "container_number": "CSQU3054491"
+    },
+    {
+      "line_no": 4,
+      "description": "Stainless steel scrap (sample)",
+      "hs_code_jp": null,
+      "hs_code_dest": null,
+      "origin_country": "JP",
+      "quantity": "12000.000",
+      "quantity_unit": "KGM",
+      "net_weight_kg": "12000.000",
+      "gross_weight_kg": "12110.000",
+      "packages": 12,
+      "package_type": "BX",
+      "unit_price": "0.96",
+      "amount": "11520.00",
+      "container_number": "CSQU3054505"
+    },
+    {
+      "line_no": 5,
+      "description": "Zinc scrap (sample)",
+      "hs_code_jp": null,
+      "hs_code_dest": null,
+      "origin_country": "JP",
+      "quantity": "9500.000",
+      "quantity_unit": "KGM",
+      "net_weight_kg": "9500.000",
+      "gross_weight_kg": "9590.000",
+      "packages": 10,
+      "package_type": "DR",
+      "unit_price": "2.20",
+      "amount": "20900.00",
+      "container_number": "CSQU3054505"
+    }
+  ],
+  "totals": {
+    "amount": "193220.00",
+    "net_weight_kg": "63000.000",
+    "gross_weight_kg": "63510.000",
+    "packages": 63
+  },
+  "documents": [
+    {
+      "doc_type": "commercial_invoice",
+      "doc_number": "INV-0010",
+      "issue_date": "2026-12-17",
+      "file": "samples/docs/INV-0010.pdf",
+      "sha256": null,
+      "fields": {
+        "totals.amount": {
+          "value": "193220.00",
+          "page": 1,
+          "bbox": [
+            401.0,
+            655.0,
+            522.0,
+            669.0
+          ],
+          "extracted_by": "ai",
+          "confidence": 0.96
+        },
+        "trade_terms.incoterms": {
+          "value": "CPT",
+          "page": 1,
+          "bbox": [
+            58.0,
+            176.0,
+            94.0,
+            190.0
+          ],
+          "extracted_by": "ai",
+          "confidence": 0.91
+        },
+        "parties.consignee.name": {
+          "value": "Demo Metal Industry (Tianjin) Co., Ltd.",
+          "page": 1,
+          "bbox": null,
+          "extracted_by": "human",
+          "confidence": null
+        }
+      }
+    },
+    {
+      "doc_type": "packing_list",
+      "doc_number": "PL-0010",
+      "issue_date": "2026-12-17",
+      "file": "samples/docs/PL-0010.pdf",
+      "sha256": null,
+      "fields": {
+        "totals.packages": {
+          "value": 63,
+          "page": 1,
+          "bbox": null,
+          "extracted_by": "rule",
+          "confidence": null
+        },
+        "totals.net_weight_kg": {
+          "value": "63000.000",
+          "page": 1,
+          "bbox": null,
+          "extracted_by": "rule",
+          "confidence": null
+        }
+      }
+    },
+    {
+      "doc_type": "bill_of_lading",
+      "doc_number": "BL-0010",
+      "issue_date": "2026-12-22",
+      "file": "samples/docs/BL-0010.pdf",
+      "sha256": null,
+      "fields": {
+        "transport.containers[2].number": {
+          "value": "CSQU3054505",
+          "page": 1,
+          "bbox": null,
+          "extracted_by": "human",
+          "confidence": null
+        },
+        "transport.etd": {
+          "value": "2026-12-22",
+          "page": 1,
+          "bbox": null,
+          "extracted_by": "human",
+          "confidence": null
+        }
+      }
+    },
+    {
+      "doc_type": "certificate_of_origin",
+      "doc_number": "CO-0010",
+      "issue_date": "2026-12-18",
+      "file": "samples/docs/CO-0010.pdf",
+      "sha256": null,
+      "fields": {
+        "lines[0].origin_country": {
+          "value": "JP",
+          "page": 1,
+          "bbox": null,
+          "extracted_by": "human",
+          "confidence": null
+        }
+      }
+    },
+    {
+      "doc_type": "export_declaration",
+      "doc_number": "ED-0010",
+      "issue_date": "2026-12-19",
+      "file": "samples/docs/ED-0010.pdf",
+      "sha256": null,
+      "fields": {}
+    },
+    {
+      "doc_type": "export_permit",
+      "doc_number": "EP-0010",
+      "issue_date": "2026-12-20",
+      "file": "samples/docs/EP-0010.pdf",
+      "sha256": null,
+      "fields": {}
+    },
+    {
+      "doc_type": "photo",
+      "doc_number": "PH-0010",
+      "issue_date": "2026-12-20",
+      "file": "samples/docs/PH-0010.jpg",
+      "sha256": null,
+      "fields": {}
+    }
+  ],
+  "events": [
+    {
+      "type": "created",
+      "at": "2026-12-15T09:00:00+09:00",
+      "by": "human",
+      "note": null
+    },
+    {
+      "type": "checked",
+      "at": "2026-12-18T15:00:00+09:00",
+      "by": "rule",
+      "note": null
+    },
+    {
+      "type": "submitted",
+      "at": "2026-12-19T10:00:00+09:00",
+      "by": "human",
+      "note": null
+    },
+    {
+      "type": "approved",
+      "at": "2026-12-20T17:00:00+09:00",
+      "by": "human",
+      "note": "Export permit received."
+    }
+  ],
+  "ext": {
+    "example-project": {
+      "internal_ref": "X-0010",
+      "tags": [
+        "demo",
+        "sample"
+      ]
+    }
+  }
+}

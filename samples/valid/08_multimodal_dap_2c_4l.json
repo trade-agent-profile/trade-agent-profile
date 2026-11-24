@@ -1,5 +1,5 @@
 {
-  "contract_version": "0.1.0",
+  "contract_version": "0.1.1",
   "shipment_id": "SHP-2026-0008",
   "direction": "export",
   "status": "submitted",
@@ -18,14 +18,28 @@
       "name": "Demo Metal Industry (Tianjin) Co., Ltd.",
       "address": "5 Demo Ave, Tianjin",
       "country": "CN"
-    }
+    },
+    "notify_parties": [
+      {
+        "name": "Sample Forwarding (Wuhan) Co., Ltd.",
+        "address": "3 Sample St, Wuhan",
+        "country": "CN"
+      },
+      {
+        "name": "Example Customs Service (Wuhan) Co., Ltd.",
+        "address": "5 Example St, Wuhan",
+        "country": "CN"
+      }
+    ]
   },
   "trade_terms": {
     "incoterms": "DAP",
     "incoterms_version": "2020",
     "place": "CNWUH",
     "currency": "USD",
-    "payment_terms": "L/C 60 days after B/L date"
+    "payment_terms": "L/C 60 days after B/L date",
+    "freight_amount": null,
+    "insurance_premium_amount": null
   },
   "transport": {
     "mode": "multimodal",
@@ -33,6 +47,9 @@
     "port_of_discharge": "CNSHA",
     "etd": "2026-12-18",
     "eta": "2026-12-22",
+    "vessel_name": "EXAMPLE RIVER",
+    "voyage_number": "0789E",
+    "booking_number": "BKG-EXAMPLE-0008",
     "containers": [
       {
         "number": "CSQU3054450",

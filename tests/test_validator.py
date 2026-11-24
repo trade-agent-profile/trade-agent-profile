@@ -366,6 +366,9 @@ def _schema_paths(schema: dict[str, Any], root: dict[str, Any], prefix: str = ""
     if isinstance(schema.get("additionalProperties"), dict):
         paths.add(prefix + ".*")
         paths |= _schema_paths(schema["additionalProperties"], root, prefix + ".*")
+    for branch in schema.get("allOf", []):  # 版や種類ごとに形を選ぶ部分も集める
+        if isinstance(branch.get("then"), dict):
+            paths |= _schema_paths(branch["then"], root, prefix)
     return paths
 
 

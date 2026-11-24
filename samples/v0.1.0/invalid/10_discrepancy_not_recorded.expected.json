@@ -1,0 +1,9 @@
+{
+  "valid": false,
+  "errors": [
+    {
+      "code": "DISCREPANCY_NOT_RECORDED",
+      "path": "documents[0].fields[\"totals.amount\"]"
+    }
+  ]
+}

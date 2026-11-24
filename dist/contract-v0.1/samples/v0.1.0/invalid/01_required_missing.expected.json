@@ -1,0 +1,9 @@
+{
+  "valid": false,
+  "errors": [
+    {
+      "code": "REQUIRED_MISSING",
+      "path": "parties.consignee"
+    }
+  ]
+}

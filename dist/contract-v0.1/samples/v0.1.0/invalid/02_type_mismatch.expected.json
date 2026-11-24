@@ -1,0 +1,9 @@
+{
+  "valid": false,
+  "errors": [
+    {
+      "code": "TYPE_MISMATCH",
+      "path": "lines[0].packages"
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "valid": false,
+  "errors": [
+    {
+      "code": "CONTAINER_CHECK_DIGIT",
+      "path": "transport.containers[0].number"
+    }
+  ]
+}

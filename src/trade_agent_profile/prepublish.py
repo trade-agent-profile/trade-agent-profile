@@ -147,7 +147,9 @@ def _git(root: Path, *args: str, stdin: bytes | None = None) -> bytes:
 
 
 def _tracked_paths(root: Path) -> list[str]:
-    return [path for path in _git(root, "ls-files", "-z").decode("utf-8", "replace").split("\0") if path]
+    return [
+        path for path in _git(root, "ls-files", "-z").decode("utf-8", "replace").split("\0") if path
+    ]
 
 
 def _worktree_blob_ids(root: Path, paths: list[str]) -> set[str]:
@@ -431,7 +433,9 @@ def scan_names(
             files += 1
             text = full.read_bytes().decode("utf-8", "replace")
             findings.extend(
-                in_lines(text, lambda ln, n, p=path: Finding("name_list", "file", p, ln, list_line=n))
+                in_lines(
+                    text, lambda ln, n, p=path: Finding("name_list", "file", p, ln, list_line=n)
+                )
             )
     for path in sorted(_history_paths(root) - set(tracked)):
         findings.extend(Finding("name_list", "path", path, list_line=n) for n in hits(path))
@@ -454,12 +458,16 @@ def scan_names(
         findings.extend(
             in_lines(
                 body,
-                lambda ln, n, c=short: Finding("name_list", "commit_message", commit=c, line=ln, list_line=n),
+                lambda ln, n, c=short: Finding(
+                    "name_list", "commit_message", commit=c, line=ln, list_line=n
+                ),
             )
         )
     for short, people in _commit_people(root):
         for list_line in sorted({n for value in people for n in hits(value)}):
-            findings.append(Finding("name_list", "commit_author", commit=short, list_line=list_line))
+            findings.append(
+                Finding("name_list", "commit_author", commit=short, list_line=list_line)
+            )
         if expected_author is not None and (
             people[0] != expected_author or people[2] != expected_author
         ):
@@ -556,7 +564,8 @@ def _grouped(result: ScanResult) -> dict[str, list[Finding]]:
 
 def _needs_history_note(result: ScanResult) -> bool:
     return any(
-        finding.where in ("history", "commit_message", "commit_author") or finding.category == "author"
+        finding.where in ("history", "commit_message", "commit_author")
+        or finding.category == "author"
         for finding in result.findings
     )
 
@@ -612,7 +621,9 @@ def format_report(
         texts = _texts(lang)
         ui = i18n.catalog(lang)["ui"]
         lines = [f"# {texts['report_title']}", "", f"> {ui['notice']}", f"> {ui['judge']}", ""]
-        lines.append(f"- {i18n.render(texts['when'], {'when': when.isoformat(timespec='seconds')})}")
+        lines.append(
+            f"- {i18n.render(texts['when'], {'when': when.isoformat(timespec='seconds')})}"
+        )
         lines += [f"- {line}" for line in _scope_lines(result, lang, commit, dirty, author)]
         lines += ["", f"| {texts['table_category']} | {texts['table_count']} |", "|---|---|"]
         for category in _categories(result):
@@ -654,7 +665,9 @@ def main(argv: list[str] | None = None) -> int:
         metavar="FILE",
         help="記録の書き先（既定は reports/prepublish.md） / record file (default: reports/prepublish.md)",
     )
-    parser.add_argument("--no-report", action="store_true", help="記録を書かない / do not write a record")
+    parser.add_argument(
+        "--no-report", action="store_true", help="記録を書かない / do not write a record"
+    )
     parser.add_argument("--lang", choices=("both", "ja", "en"), default="both")
     parser.add_argument(
         "--quiet",

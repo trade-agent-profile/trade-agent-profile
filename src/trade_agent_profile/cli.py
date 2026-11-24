@@ -1,4 +1,4 @@
-"""検証コマンド。
+"""検証コマンドと、古い版のデータを書き換えるコマンド。
 
 入力にはファイル、フォルダ、複数ファイル、ワイルドカードを受け付ける。
 PowerShell は外部コマンドに渡すワイルドカードを展開しないので、ここで展開する。
@@ -15,9 +15,15 @@ from pathlib import Path
 
 from . import i18n
 from .issues import ValidationResult
-from .messages import validate_any_file
+from .messages import is_message, validate_any_file
 from .profile import SUPPORTED_PROFILE_VERSIONS
-from .validator import SUPPORTED_CONTRACT_VERSIONS
+from .upgrade import UPGRADABLE_FROM, UpgradeError, upgrade_shipment
+from .validator import (
+    LATEST_CONTRACT_VERSION,
+    SUPPORTED_CONTRACT_VERSIONS,
+    read_json,
+    validate_shipment,
+)
 
 EXIT_OK = 0
 EXIT_NG = 1
@@ -208,6 +214,77 @@ def _run_validate(args: argparse.Namespace) -> int:
     return EXIT_OK if all(row.result.valid for row in rows) else EXIT_NG
 
 
+def _upgrade_one(path: Path, out: Path, langs: tuple[str, ...]) -> str:
+    """1ファイルを書き換えて書き出す。結果の種類（done・same・exists・failed）を返す。"""
+
+    def say(kind: str, detail_key: str, **params: object) -> str:
+        print(f"[{_ui(langs, f'upgrade_{kind}')}] {path}")
+        print(f"  {_ui(langs, detail_key, **params)}")
+        return kind
+
+    data, problem = read_json(path)
+    if problem is not None:
+        return say("failed", "upgrade_reason_unreadable")
+    if is_message(data):
+        return say("failed", "upgrade_reason_message")
+    try:
+        upgraded = upgrade_shipment(data)
+    except UpgradeError as error:
+        supported = ", ".join((*UPGRADABLE_FROM, LATEST_CONTRACT_VERSION))
+        return say(
+            "failed",
+            f"upgrade_reason_{error.reason}",
+            value=error.detail,
+            name=error.detail,
+            supported=supported,
+        )
+    if upgraded == data:
+        return say("same", "upgrade_same_detail", version=LATEST_CONTRACT_VERSION)
+    target = out / path.name
+    if target.exists():  # 上書きはしない
+        return say("exists", "upgrade_exists_detail", target=target)
+    out.mkdir(parents=True, exist_ok=True)
+    text = json.dumps(upgraded, ensure_ascii=False, indent=2) + "\n"
+    target.write_text(text, encoding="utf-8", newline="\n")
+    kind = say(
+        "done",
+        "upgrade_done_detail",
+        from_version=data["contract_version"],
+        to_version=upgraded["contract_version"],
+        target=target,
+    )
+    errors = validate_shipment(upgraded).errors
+    if errors:
+        print(f"  {_ui(langs, 'upgrade_check_ng', count=len(errors))}")
+    else:
+        print(f"  {_ui(langs, 'upgrade_check_ok')}")
+    return kind
+
+
+def _run_upgrade(args: argparse.Namespace) -> int:
+    """古い版の shipment.json を、いまの版の形に書き換えて、別のフォルダに書き出す。"""
+    langs = i18n.LANGS if args.lang == "both" else (args.lang,)
+    files, missing = expand_paths(args.paths)
+    if missing:
+        for arg in missing:
+            print(_ui(langs, "no_files", arg=arg), file=sys.stderr)
+        return EXIT_USAGE
+
+    for lang in langs:
+        print(i18n.catalog(lang)["ui"]["notice"])
+    print()
+    counts = {"done": 0, "same": 0, "exists": 0, "failed": 0}
+    for path in files:
+        counts[_upgrade_one(path, Path(args.out), langs)] += 1
+    print()
+    for lang in langs:
+        ui = i18n.catalog(lang)["ui"]
+        print(ui["upgrade_summary"].format(total=len(files), **counts))
+        print(ui["upgrade_note"])
+        print(ui["judge"])
+    return EXIT_OK if not (counts["failed"] or counts["exists"]) else EXIT_NG
+
+
 def main(argv: list[str] | None = None) -> int:
     setup_stdio()
     parser = argparse.ArgumentParser(
@@ -249,7 +326,37 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="問題のあるファイルと集計だけを出す / only show problems and the summary",
     )
+    upgrade = commands.add_parser(
+        "upgrade",
+        help=(
+            "古い版の shipment.json を、いまの版の形に書き換える / "
+            "upgrade shipment.json files to the current contract version"
+        ),
+    )
+    upgrade.add_argument(
+        "paths",
+        nargs="+",
+        metavar="PATH",
+        help="ファイル、フォルダ、ワイルドカード / files, folders or wildcards",
+    )
+    upgrade.add_argument(
+        "--out",
+        required=True,
+        metavar="FOLDER",
+        help=(
+            "書き出し先のフォルダ（もとのファイルは変えない。同じ名前があれば上書きしない） / "
+            "output folder (sources are not changed; existing files are not overwritten)"
+        ),
+    )
+    upgrade.add_argument(
+        "--lang",
+        choices=("both", "ja", "en"),
+        default="both",
+        help="表示する言語（既定は両方） / language of messages (default: both)",
+    )
     args = parser.parse_args(argv)
+    if args.command == "upgrade":
+        return _run_upgrade(args)
     return _run_validate(args)
 
 

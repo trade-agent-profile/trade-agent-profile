@@ -134,4 +134,4 @@ uv run python -m trade_agent_profile.mcp_server
 | フォワーダー | freight forwarder | 货运代理 |
 | 通関業者 | customs broker | 报关行 |
 
-The declaration draft is a mock and cannot be used for an actual declaration. In Japan, preparing customs documents such as declarations for others as a business requires a customs brokerage license (Customs Brokerage Act, Article 2, item 1 (b) and item 2, and Article 3, paragraph 1).
+The declaration draft is a mock and cannot be used for an actual declaration. In Japan, preparing customs documents such as declarations for others as a business requires a customs brokerage license (Customs Brokerage Act, Article 2, item 1 (b) and item 2, and Article 3, paragraph 1). According to the Japan Customs circular on this Act (2-3), "as a business" also covers work done free of charge alongside another business. Ask customs or a qualified professional whether your use falls under this.

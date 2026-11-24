@@ -4,7 +4,7 @@
 
 判断するのは利用者です。このツールは下調べと記録を担います。
 
-共通データ契約 v0.1.0（`schema/shipment.schema.json`）の項目が、既存の標準のどの項目にあたるかを示す。
+共通データ契約 v0.1.1（`schema/shipment.schema.json`）の項目が、既存の標準のどの項目にあたるかを示す。「0.1.1」と付けた項目は、0.1.1 で足したもので、0.1.0 のデータにはない。
 
 - 書くのは、項目名と出典（URL と確認日）だけである。標準の本文は転載しない。出典の URL と確認日は、表ごとに表の上に書く。
 - 対応は、この案が項目名と型を見て判断したもので、各標準の団体が認めたものではない。使う前に、出典で意味を確かめること。
@@ -25,9 +25,9 @@
 
 ## 2. DCSA（船荷証券・海上運送状）
 
-出典：<https://app.swaggerhub.com/apis/dcsaorg/DCSA_EBL/3.0.3>（スキーマ `TransportDocument`。確認日 2026-11-23）
+出典：<https://app.swaggerhub.com/apis/dcsaorg/DCSA_EBL/3.0.3>（スキーマ `TransportDocument`。確認日 2026-11-23。「0.1.1」と付けた行は、同じ出典で 2026-11-24 に確かめた）
 
-当事者の役割名（`shipper`、`consignee`）は、契約を作るときに DCSA に合わせてある。
+当事者の役割名（`shipper`、`consignee`、`notify_parties`）は、契約を作るときに DCSA に合わせてある。
 
 | この契約の項目 | DCSA の項目 |
 |---|---|
@@ -36,11 +36,17 @@
 | `parties.shipper.country` | `documentParties.shipper.address.countryCode` |
 | `parties.consignee.name` | `documentParties.consignee.partyName` |
 | `parties.exporter` | 対応なし |
+| `parties.notify_parties[]`（0.1.1） | `documentParties.notifyParties[]`（どちらも3件まで） |
+| `parties.notify_parties[].name`（0.1.1） | `documentParties.notifyParties[].partyName` |
 | `trade_terms`（取引条件、通貨、支払条件） | 対応なし |
+| `trade_terms.freight_amount`、`trade_terms.insurance_premium_amount`（0.1.1） | 対応なし（DCSA の `charges[]` は、運送人が書類に載せる料金の一覧で、インボイスの金額の内訳ではない） |
 | `transport.port_of_loading` | `transports.portOfLoading.UNLocationCode` |
 | `transport.port_of_discharge` | `transports.portOfDischarge.UNLocationCode` |
 | `transport.etd` | `transports.plannedDepartureDate` |
 | `transport.eta` | `transports.plannedArrivalDate` |
+| `transport.vessel_name`（0.1.1） | 近い：`transports.vesselVoyages[].vesselName`（DCSA は本船ごとの一覧。この契約は1つだけ） |
+| `transport.voyage_number`（0.1.1） | 近い：`transports.vesselVoyages[].carrierExportVoyageNumber`（同上） |
+| `transport.booking_number`（0.1.1） | 近い：`consignmentItems[].carrierBookingReference`（DCSA は品目ごと。この契約は船積みに1つだけ） |
 | `transport.containers[].number` | `utilizedTransportEquipments[].equipment.equipmentReference` |
 | `transport.containers[].iso_type` | `utilizedTransportEquipments[].equipment.ISOEquipmentCode` |
 | `transport.containers[].seals[]` | `utilizedTransportEquipments[].seals[].number` |
@@ -59,7 +65,7 @@
 
 ## 3. TradeTrust
 
-出典：<https://github.com/TradeTrust/schemata>（`src/io/tradetrust/bill-of-lading/1.0/schema.json` と `src/io/tradetrust/invoice/1.0/schema.json`。確認日 2026-11-23）
+出典：<https://github.com/TradeTrust/schemata>（`src/io/tradetrust/bill-of-lading/1.0/schema.json` と `src/io/tradetrust/invoice/1.0/schema.json`。確認日 2026-11-23。「0.1.1」と付けた行は、船荷証券のスキーマで 2026-11-24 に確かめた）
 
 ### 3.1 船荷証券（bill-of-lading 1.0）
 
@@ -70,8 +76,12 @@
 | `parties.shipper.address` | 近い：`shipper.address.street` |
 | `parties.shipper.country` | 近い：`shipper.address.country` |
 | `parties.consignee.name` | `consignee.name` |
+| `parties.notify_parties[].name`（0.1.1） | 近い：`notifyParty.name`（TradeTrust は1件だけ） |
 | `transport.port_of_loading` | 近い：`portOfLoading`（文字の項目） |
 | `transport.port_of_discharge` | 近い：`portOfDischarge`（文字の項目） |
+| `transport.vessel_name`（0.1.1） | `vessel` |
+| `transport.voyage_number`（0.1.1） | `voyageNo` |
+| `transport.booking_number`（0.1.1） | 対応なし |
 | `lines[].description` | `packages[].description` |
 | `lines[].gross_weight_kg` | 近い：`packages[].weight`（文字の項目） |
 | `transport.containers` | 対応なし |

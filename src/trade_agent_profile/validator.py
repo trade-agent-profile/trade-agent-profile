@@ -3,6 +3,10 @@
 流れ：版の確認 → スキーマ（形・型・形式）→ 規則（検査数字、合計、日付の前後など）。
 前の段で問題が見つかったら、後ろの段は行わない。
 1つの原因から、似たエラーがいくつも出るのを防ぐため。
+
+版は、データに書いてある contract_version で決まる。スキーマが、その版に合わせて
+当事者・取引条件・輸送の形を選ぶ（0.1.1 で項目が足された）。0.1.0 のデータは、
+0.1.0 の形のまま合格にする。
 """
 
 from __future__ import annotations
@@ -19,7 +23,8 @@ from .issues import Issue, ValidationResult
 from .paths import Part
 from .rules import run_rules
 
-SUPPORTED_CONTRACT_VERSIONS = ("0.1.0",)
+SUPPORTED_CONTRACT_VERSIONS = ("0.1.0", "0.1.1")
+LATEST_CONTRACT_VERSION = SUPPORTED_CONTRACT_VERSIONS[-1]
 
 _VERSION_RE = re.compile(r"^[0-9]+\.[0-9]+\.[0-9]+$")
 _STRONG_CODES = ("REQUIRED_NULL", "TYPE_MISMATCH", "EXT_INVALID")
